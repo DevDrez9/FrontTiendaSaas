@@ -1,0 +1,114 @@
+/* Auth.css */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-bg-shape1 {
+  position: absolute;
+  top: -10rem;
+  left: -10rem;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.1;
+  filter: blur(40px);
+  z-index: 0;
+}
+
+.auth-bg-shape2 {
+  position: absolute;
+  bottom: -5rem;
+  right: -5rem;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.1;
+  filter: blur(40px);
+  z-index: 0;
+}
+
+.auth-left {
+  flex: 1;
+  display: none; /* hidden on small screens */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 3rem;
+  text-align: center;
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .auth-left {
+    display: flex;
+  }
+}
+
+.auth-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  z-index: 10;
+}
+
+.auth-glass-container {
+  width: 100%;
+  max-width: 440px;
+  padding: 2.5rem;
+  /* Additional tweak for readability if needed */
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.auth-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
+  text-align: center;
+}
+
+.auth-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.error-message {
+  background: #fee2e2;
+  color: var(--danger);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  border: 1px solid #fca5a5;
+  text-align: center;
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.auth-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.auth-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}

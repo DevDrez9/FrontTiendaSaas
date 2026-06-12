@@ -1,0 +1,105 @@
+/* DashboardLayout.css */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fa;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.sidebar {
+  width: 260px;
+  background: white;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 24px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.sidebar-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0;
+}
+
+.sidebar-header p {
+  font-size: 14px;
+  color: #718096;
+  margin: 5px 0 0 0;
+}
+
+.sidebar-nav {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #4a5568;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background-color: #ebf4ff;
+  color: #3182ce;
+}
+
+.nav-item.logout {
+  margin-top: auto;
+  color: #e53e3e;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 16px;
+}
+
+.nav-item.logout:hover {
+  background-color: #fff5f5;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  background: white;
+  padding: 16px 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: #718096;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-text:hover {
+  color: #1a202c;
+}
+
+.content-area {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+}

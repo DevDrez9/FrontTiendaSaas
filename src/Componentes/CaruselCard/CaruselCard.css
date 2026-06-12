@@ -1,0 +1,65 @@
+.carusel-container, .tituloCard {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 40px; /* Espacio para los botones */
+}
+.tituloCard h2{
+  font-size: xx-large;
+}
+.carusel-track {
+  display: flex;
+  width: max-content;
+  gap: 20px;
+  will-change: transform;
+}
+
+.carusel-card {
+  flex: 0 0 180px; /* Ancho fijo para cada card */
+}
+
+/* Estilos para los botones */
+.carusel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.carusel-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.carusel-button.prev {
+  left: 0;
+}
+
+.carusel-button.next {
+  right: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .carusel-container {
+    padding: 0 30px;
+  }
+  
+  .carusel-button {
+    width: 35px;
+    height: 35px;
+  }
+}

@@ -1,0 +1,84 @@
+.card{
+    width: 220px;
+    height: 326px;
+    background-color: white;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0 5px 10px 5px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    
+}
+.img{
+    width: 100%;
+    height: 200px;
+    margin: 0;
+    padding: 0;
+
+}
+.img img{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border-radius: 15px;
+
+}
+.img img:hover{
+   
+    transform: scale(1.02) translateY(-5px);
+}
+.contenidoCard{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.estado{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    height: 30px;
+}
+.nuevo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 30px;
+    background-color: rgb(83, 189, 83);
+    border-radius: 5px;
+    font-weight: bold;
+   
+}
+.oferta{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 30px;
+    background-color: rgb(162, 208, 226);
+    border-radius: 5px;
+    font-weight: bold;
+}
+.nombre{
+    width: 95%;
+    margin:  7px;
+    text-align: start;
+    color: black;
+    text-transform: uppercase;
+    font-size: 15px;
+    white-space: normal;    /* Asegura que el texto pueda saltar líneas */
+    word-wrap: break-word;  /* Rompe palabras muy largas si es necesario */
+    overflow-wrap: break-word; /* Alternativa moderna */
+   -webkit-box-orient: vertical;
+}
+.precio{
+    width: 95%;
+     margin:  7px;
+     color: black;
+     text-align: start;
+     font-weight: bold;
+     font-size: 20px;
+}
