@@ -5,6 +5,9 @@ import { ShoppingCart, Plus } from 'lucide-react';
 import './Storefront.css';
 
 export default function SimpleView({ storeData, productos }: { storeData: any, productos: any[] }) {
+  const config = storeData.configWeb;
+  const colorPrimario = config?.colorPrimario || '#000000';
+
   const { addToCart, items, getTotal } = useCartStore();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 

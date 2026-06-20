@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShoppingCart, Plus, Search, Menu } from 'lucide-react';
+import { ShoppingCart, Plus, Menu } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
 import './Storefront.css';
