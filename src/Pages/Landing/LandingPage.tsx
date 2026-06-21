@@ -6,7 +6,7 @@ export default function LandingPage() {
     <div className="landing-wrapper">
       <header className="landing-header">
         <div className="container landing-header-inner">
-          <div className="logo-text">MiTienda SaaS</div>
+          <div className="logo-text">micatalogo</div>
           <Link to="/login" className="btn btn-primary">
             Iniciar Sesión
           </Link>
@@ -46,7 +46,7 @@ export default function LandingPage() {
               <div className="card pricing-card animate-slide-up">
                 <h3 className="card-title">Plan Básico</h3>
                 <p className="card-desc">Ideal para pequeños comercios que necesitan un catálogo simple.</p>
-                <div className="price-tag">$9.99<span>/mes</span></div>
+                <div className="price-tag">Bs9.99<span>/mes</span></div>
                 
                 <ul className="features-list">
                   <li>Vista simplificada de productos</li>
@@ -64,7 +64,7 @@ export default function LandingPage() {
                 <div className="pricing-badge">RECOMENDADO</div>
                 <h3 className="card-title">Plan Avanzado</h3>
                 <p className="card-desc">Para negocios que buscan una experiencia de compra completa.</p>
-                <div className="price-tag">$29.99<span>/mes</span></div>
+                <div className="price-tag">Bs29.99<span>/mes</span></div>
                 
                 <ul className="features-list">
                   <li>Tienda con diseño completo</li>

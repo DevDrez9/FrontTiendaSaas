@@ -160,11 +160,11 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
                   <div className="flex justify-center items-center gap-2">
                     {p.enOferta && p.precioOferta ? (
                       <>
-                        <span className="text-sm text-muted" style={{ textDecoration: 'line-through' }}>${p.precio}</span>
-                        <span className="font-bold text-lg" style={{ color: colorPrimario }}>${p.precioOferta}</span>
+                        <span className="text-sm text-muted" style={{ textDecoration: 'line-through' }}>Bs{p.precio}</span>
+                        <span className="font-bold text-lg" style={{ color: colorPrimario }}>Bs{p.precioOferta}</span>
                       </>
                     ) : (
-                      <span className="font-bold text-lg text-main">${p.precio}</span>
+                      <span className="font-bold text-lg text-main">Bs{p.precio}</span>
                     )}
                   </div>
                 </div>

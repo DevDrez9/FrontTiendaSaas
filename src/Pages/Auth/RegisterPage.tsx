@@ -42,7 +42,7 @@ export default function RegisterPage() {
       <div className="auth-bg-shape2"></div>
 
       <div className="auth-left">
-        <h1 className="text-4xl mb-4 text-center">Únete a MiTienda SaaS</h1>
+        <h1 className="text-4xl mb-4 text-center">Únete a micatalogo</h1>
         <p className="text-lg text-center" style={{ opacity: 0.9, maxWidth: '400px' }}>
           Crea tu tienda en línea en minutos y comienza a vender a todo el mundo de inmediato.
         </p>

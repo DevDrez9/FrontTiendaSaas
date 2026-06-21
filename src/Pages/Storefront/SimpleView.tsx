@@ -66,11 +66,11 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
                     <div>
                       {p.enOferta && p.precioOferta ? (
                         <>
-                          <span className="text-xs text-muted" style={{ textDecoration: 'line-through', display: 'block' }}>${p.precio}</span>
-                          <span className="font-bold text-lg text-primary">${p.precioOferta}</span>
+                          <span className="text-xs text-muted" style={{ textDecoration: 'line-through', display: 'block' }}>Bs{p.precio}</span>
+                          <span className="font-bold text-lg text-primary">Bs{p.precioOferta}</span>
                         </>
                       ) : (
-                        <span className="font-bold text-lg">${p.precio}</span>
+                        <span className="font-bold text-lg">Bs{p.precio}</span>
                       )}
                     </div>
                     <button 
@@ -97,7 +97,7 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
         <div className="store-floating-cart">
           <div>
             <div className="text-sm text-muted">{totalItems} items</div>
-            <div className="font-bold text-lg">${getTotal().toFixed(2)}</div>
+            <div className="font-bold text-lg">Bs{getTotal().toFixed(2)}</div>
           </div>
           <button 
             onClick={() => setIsCheckoutOpen(true)}

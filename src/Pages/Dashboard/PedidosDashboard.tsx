@@ -81,7 +81,7 @@ export default function PedidosDashboard() {
                     <div className="text-sm text-muted">{pedido.direccion}</div>
                   </td>
                   <td>{new Date(pedido.createdAt).toLocaleDateString()}</td>
-                  <td className="font-bold text-primary">${pedido.total}</td>
+                  <td className="font-bold text-primary">Bs{pedido.total}</td>
                   <td>
                     <select 
                       value={pedido.estado} 
