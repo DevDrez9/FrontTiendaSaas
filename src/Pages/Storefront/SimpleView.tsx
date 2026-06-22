@@ -48,7 +48,7 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
             <p>Esta tienda aún no tiene productos disponibles.</p>
           </div>
         ) : (
-          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
+          <div className="products-grid gap-4">
             {productos.map(p => (
               <div key={p.id} className="card store-product-card flex flex-col">
                 <div className="store-image-wrapper bg-gray-50" style={{ aspectRatio: '1/1' }}>

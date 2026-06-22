@@ -128,7 +128,7 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
             <p>No hay productos en esta categoría.</p>
           </div>
         ) : (
-          <div className="grid gap-6" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
+          <div className="products-grid gap-6">
             {productosMostrados.map(p => (
               <div key={p.id} className="card store-product-card flex flex-col overflow-hidden">
                 <div className="store-image-wrapper bg-gray-50" style={{ aspectRatio: '4/5' }}>

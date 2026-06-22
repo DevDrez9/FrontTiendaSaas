@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
-import { LogOut, Package, Settings, LayoutDashboard, Shield, ShoppingCart, Tags } from 'lucide-react';
+import { LogOut, Package, Settings, LayoutDashboard, Shield, ShoppingCart, Tags, Menu, X } from 'lucide-react';
 import './DashboardLayout.css';
 
 export default function DashboardLayout() {
   const { token, user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [storeData, setStoreData] = useState<any>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -29,14 +30,24 @@ export default function DashboardLayout() {
 
   return (
     <div className="dashboard-container">
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div className="sidebar-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>
+      )}
+
       {/* Sidebar */}
-      <div className="sidebar">
-        <div className="sidebar-header">
-          <h2>Panel SaaS</h2>
-          <p>Hola, {user?.nombre}</p>
+      <div className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
+        <div className="sidebar-header flex justify-between items-center">
+          <div>
+            <h2>Panel SaaS</h2>
+            <p>Hola, {user?.nombre}</p>
+          </div>
+          <button className="mobile-close-btn" onClick={() => setIsMobileMenuOpen(false)}>
+            <X size={20} />
+          </button>
         </div>
         <nav className="sidebar-nav">
-          <Link to="/dashboard" className="nav-item">
+          <Link to="/dashboard" className="nav-item" onClick={() => setIsMobileMenuOpen(false)}>
             <LayoutDashboard size={20} />
             Inicio
           </Link>
@@ -67,7 +78,7 @@ export default function DashboardLayout() {
           )}
 
           <button 
-            onClick={() => logout()}
+            onClick={() => { logout(); setIsMobileMenuOpen(false); }}
             className="nav-item logout"
           >
             <LogOut size={20} />
@@ -79,6 +90,9 @@ export default function DashboardLayout() {
       {/* Main Content */}
       <div className="main-content">
         <header className="topbar">
+           <button className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(true)}>
+             <Menu size={24} />
+           </button>
            <button onClick={() => logout()} className="btn-text">Salir</button>
         </header>
         <main className="content-area">
