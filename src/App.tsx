@@ -10,6 +10,7 @@ import CategoriasDashboard from "./Pages/Dashboard/CategoriasDashboard";
 import DashboardHome from "./Pages/Dashboard/DashboardHome";
 import AdminPanel from "./Pages/Dashboard/AdminPanel";
 import StoreRouter from "./Pages/Storefront/StoreRouter";
+import DetalleProducto from "./Pages/Storefront/DetalleProducto";
 
 function App() {
   return (
@@ -31,6 +32,9 @@ function App() {
 
         {/* Dynamic Store Routes */}
         <Route path="/:storeDomain" element={<StoreRouter />} />
+        
+        {/* Product Details Route */}
+        <Route path="/producto/:id" element={<DetalleProducto />} />
       </Routes>
     </BrowserRouter>
   );

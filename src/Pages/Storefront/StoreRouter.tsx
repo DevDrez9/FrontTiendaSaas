@@ -41,7 +41,7 @@ export default function StoreRouter() {
 
   // Plan logic: Assuming plan level < 5 is Basic, level >= 5 is Advanced
   // Or maybe check if plan.nombre contains 'Básico'
-  const isBasicPlan = !storeData.plan || storeData.plan.nivel < 5; // Fallback to basic if no plan
+  const isBasicPlan = !storeData.plan || storeData.plan.nivel < 2; // Fallback to basic if no plan
 
   if (isBasicPlan) {
     return <SimpleView storeData={storeData} productos={productos} />;

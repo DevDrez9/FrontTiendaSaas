@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { ShoppingCart, Plus, Menu } from 'lucide-react';
+import { ShoppingCart, Menu, Plus, X, Search, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
+import AddToCartModal from './AddToCartModal';
 import './Storefront.css';
 
 export default function AdvancedView({ storeData, productos }: { storeData: any, productos: any[] }) {
@@ -13,6 +15,7 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [categoriaActiva, setCategoriaActiva] = useState<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedProductForCart, setSelectedProductForCart] = useState<any>(null);
 
   // Extraer categorías únicas de los productos
   const categorias = Array.from(new Map(productos.filter(p => p.categoria).map(p => [p.categoria.id, p.categoria])).values());
@@ -129,34 +132,52 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
             {productosMostrados.map(p => (
               <div key={p.id} className="card store-product-card flex flex-col overflow-hidden">
                 <div className="store-image-wrapper bg-gray-50" style={{ aspectRatio: '4/5' }}>
-                  {p.imagenUrl ? (
-                    <img 
-                      src={p.imagenUrl} 
-                      alt={p.nombre} 
-                      className="w-full h-full"
-                      style={{ objectFit: 'cover' }} 
-                    />
+                  {(storeData.plan?.nivel || 0) >= 3 ? (
+                    <Link to={`/producto/${p.id}`} style={{ display: 'block', height: '100%' }}>
+                      {p.imagenUrl ? (
+                        <img 
+                          src={p.imagenUrl} 
+                          alt={p.nombre} 
+                          className="w-full h-full"
+                          style={{ objectFit: 'cover' }} 
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted">No Image</div>
+                      )}
+                    </Link>
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted">No Image</div>
+                    <div style={{ display: 'block', height: '100%' }}>
+                      {p.imagenUrl ? (
+                        <img 
+                          src={p.imagenUrl} 
+                          alt={p.nombre} 
+                          className="w-full h-full"
+                          style={{ objectFit: 'cover' }} 
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted">No Image</div>
+                      )}
+                    </div>
                   )}
                   {/* Overlay Hover Actions */}
                   <div className="store-gradient-overlay">
                     <button 
-                      onClick={() => addToCart(storeData.id, {
-                        id: p.id, 
-                        nombre: p.nombre, 
-                        precio: Number(p.enOferta && p.precioOferta ? p.precioOferta : p.precio),
-                        imagenUrl: p.imagenUrl
-                      })}
-                      className="btn w-full"
-                      style={{ backgroundColor: colorPrimario, color: colorSecundario, display: 'flex', justifyContent: 'center' }}
+                      onClick={() => setSelectedProductForCart(p)}
+                      className="btn btn-primary w-full shadow-lg"
+                      style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'center' }}
                     >
                       <Plus size={18} /> Agregar al Carrito
                     </button>
                   </div>
                 </div>
                 <div className="p-4 text-center">
-                  <h3 className="font-medium mb-2" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '0 0 0.5rem 0' }}>{p.nombre}</h3>
+                  {(storeData.plan?.nivel || 0) >= 3 ? (
+                    <Link to={`/producto/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <h3 className="font-medium mb-2 hover-text-primary" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '0 0 0.5rem 0', transition: 'color 0.2s' }}>{p.nombre}</h3>
+                    </Link>
+                  ) : (
+                    <h3 className="font-medium mb-2" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '0 0 0.5rem 0' }}>{p.nombre}</h3>
+                  )}
                   <div className="flex justify-center items-center gap-2">
                     {p.enOferta && p.precioOferta ? (
                       <>
@@ -196,11 +217,20 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
         </div>
       </footer>
 
+      {/* Modal de checkout */}
       <CheckoutModal 
         isOpen={isCheckoutOpen} 
         onClose={() => setIsCheckoutOpen(false)} 
         colorPrimario={colorPrimario}
         whatsapp={config?.whatsapp}
+      />
+
+      {/* Modal para agregar cantidad al carrito */}
+      <AddToCartModal
+        isOpen={!!selectedProductForCart}
+        onClose={() => setSelectedProductForCart(null)}
+        producto={selectedProductForCart}
+        tiendaId={storeData.id}
       />
     </div>
   );

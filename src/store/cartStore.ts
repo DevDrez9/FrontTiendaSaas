@@ -12,7 +12,7 @@ export interface CartItem {
 interface CartState {
   tiendaId: number | null;
   items: CartItem[];
-  addToCart: (tiendaId: number, item: Omit<CartItem, 'cantidad'>) => void;
+  addToCart: (tiendaId: number, item: Omit<CartItem, 'cantidad'>, cantidadAAgregar?: number) => void;
   removeFromCart: (itemId: number) => void;
   updateQuantity: (itemId: number, cantidad: number) => void;
   clearCart: () => void;
@@ -24,11 +24,11 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       tiendaId: null,
       items: [],
-      addToCart: (tiendaId, newItem) => {
+      addToCart: (tiendaId, newItem, cantidadAAgregar = 1) => {
         set((state) => {
           // Si el usuario intenta comprar en una tienda diferente, limpiamos el carrito
           if (state.tiendaId !== null && state.tiendaId !== tiendaId) {
-            return { tiendaId, items: [{ ...newItem, cantidad: 1 }] };
+            return { tiendaId, items: [{ ...newItem, cantidad: cantidadAAgregar }] };
           }
 
           const existingItem = state.items.find(item => item.id === newItem.id);
@@ -37,12 +37,12 @@ export const useCartStore = create<CartState>()(
               tiendaId,
               items: state.items.map(item =>
                 item.id === newItem.id
-                  ? { ...item, cantidad: item.cantidad + 1 }
+                  ? { ...item, cantidad: item.cantidad + cantidadAAgregar }
                   : item
               )
             };
           }
-          return { tiendaId, items: [...state.items, { ...newItem, cantidad: 1 }] };
+          return { tiendaId, items: [...state.items, { ...newItem, cantidad: cantidadAAgregar }] };
         });
       },
       removeFromCart: (itemId) => {

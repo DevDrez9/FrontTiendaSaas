@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useCartStore } from '../../store/cartStore';
+import { Trash2, Plus, Minus } from 'lucide-react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -10,7 +11,7 @@ interface CheckoutModalProps {
 }
 
 export default function CheckoutModal({ isOpen, onClose, colorPrimario = '#3182ce', whatsapp }: CheckoutModalProps) {
-  const { items, getTotal, tiendaId, clearCart } = useCartStore();
+  const { items, getTotal, tiendaId, clearCart, updateQuantity, removeFromCart } = useCartStore();
   const [cliente, setCliente] = useState('');
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
@@ -94,12 +95,38 @@ export default function CheckoutModal({ isOpen, onClose, colorPrimario = '#3182c
               ) : (
                 <div className="flex flex-col gap-2">
                   {items.map(item => (
-                    <div key={item.id} className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="badge" style={{ backgroundColor: '#f1f5f9', color: '#334155' }}>{item.cantidad}x</span>
-                        <span className="text-main" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>{item.nombre}</span>
+                    <div key={item.id} className="cart-item-row">
+                      <div className="cart-item-info">
+                        <span className="cart-item-title" title={item.nombre}>{item.nombre}</span>
+                        <span className="cart-item-price">Bs{(item.precio * item.cantidad).toFixed(2)}</span>
                       </div>
-                      <span className="font-medium">Bs{(item.precio * item.cantidad).toFixed(2)}</span>
+                      
+                      <div className="cart-item-actions">
+                        <div className="cart-mini-qty">
+                          <button 
+                            type="button"
+                            onClick={() => updateQuantity(item.id, item.cantidad - 1)}
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span>{item.cantidad}</span>
+                          <button 
+                            type="button"
+                            onClick={() => updateQuantity(item.id, item.cantidad + 1)}
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                        
+                        <button 
+                          type="button"
+                          onClick={() => removeFromCart(item.id)}
+                          className="cart-item-delete"
+                          title="Eliminar del carrito"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                   <div className="border-t flex justify-between items-center text-lg font-bold" style={{ marginTop: '0.5rem', paddingTop: '0.5rem' }}>

@@ -43,7 +43,8 @@ export default function ConfiguracionDashboard() {
       // Guardar nombre y descripción de la tienda
       await axios.patch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/tiendas/${storeData.id}`, {
         nombre: storeData.nombre,
-        descripcion: storeData.descripcion
+        descripcion: storeData.descripcion,
+        ciudad: storeData.ciudad
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -134,6 +135,17 @@ export default function ConfiguracionDashboard() {
             />
           </div>
 
+          <div className="form-group mb-0">
+            <label className="form-label">Ciudad de la Tienda</label>
+            <input 
+              type="text" 
+              className="form-input"
+              value={storeData.ciudad || ''}
+              onChange={(e) => setStoreData({...storeData, ciudad: e.target.value})}
+              placeholder="Ej. Madrid, Buenos Aires, Ciudad de México"
+            />
+          </div>
+
           <div className="form-group mb-0 border-t pt-4 mt-2">
             <h3 className="text-lg font-bold mb-4">Datos de Contacto y Diseño</h3>
             <label className="form-label">Número de WhatsApp (con código de país, ej. 5215551234567)</label>
@@ -174,7 +186,7 @@ export default function ConfiguracionDashboard() {
             </div>
           </div>
 
-          {(storeData.plan?.nivel || 0) >= 5 && (
+          {(storeData.plan?.nivel || 0) >= 2 && (
             <div className="form-group mb-0 border-t pt-4 mt-2">
               <label className="form-label">Banner Principal (Tienda Avanzada)</label>
               {configWeb.banners && configWeb.banners.length > 0 && (

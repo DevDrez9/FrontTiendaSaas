@@ -25,7 +25,7 @@ export default function DashboardLayout() {
 
   if (!token) return null;
 
-  const showCategories = storeData && storeData.plan && storeData.plan.nivel >= 5;
+  const showCategories = storeData && storeData.plan && storeData.plan.nivel >= 2;
 
   return (
     <div className="dashboard-container">

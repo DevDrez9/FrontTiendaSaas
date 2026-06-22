@@ -67,7 +67,7 @@ export default function CategoriasDashboard() {
 
   if (loading) return <div className="p-8 text-muted">Cargando categorías...</div>;
   
-  if (!storeData || (storeData.plan?.nivel || 0) < 5) {
+  if (!storeData || (storeData.plan?.nivel || 0) < 2) {
     return (
       <div className="p-8">
         <div className="warning-card">

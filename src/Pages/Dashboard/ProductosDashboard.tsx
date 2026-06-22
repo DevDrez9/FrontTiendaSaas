@@ -15,8 +15,10 @@ export default function ProductosDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentEditId, setCurrentEditId] = useState<number | null>(null);
-  const [formProd, setFormProd] = useState({ nombre: '', precio: '', categoriaId: '' });
-  const [imagenFile, setImagenFile] = useState<File | null>(null);
+  const [formProd, setFormProd] = useState({ nombre: '', precio: '', categoriaId: '', descripcion: '' });
+  const [imagenFiles, setImagenFiles] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<any[]>([]);
+  const [imagesModified, setImagesModified] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const fetchData = async () => {
@@ -35,7 +37,7 @@ export default function ProductosDashboard() {
         setProductos(resProd.data.data || []);
         
         // 3. Get categories (only if plan allows)
-        if ((miTienda.plan?.nivel || 0) >= 5) {
+        if ((miTienda.plan?.nivel || 0) >= 2) {
           const resCat = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/categoria/tienda/${miTienda.id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
@@ -57,7 +59,7 @@ export default function ProductosDashboard() {
     e.preventDefault();
     setIsUploading(true);
     try {
-      const isAdvanced = (storeData.plan?.nivel || 0) >= 5;
+      const isAdvanced = (storeData.plan?.nivel || 0) >= 2;
       let finalCategoriaId = isAdvanced ? formProd.categoriaId : null;
 
       if (isAdvanced && !finalCategoriaId) {
@@ -66,33 +68,52 @@ export default function ProductosDashboard() {
         return;
       }
 
-      let uploadedUrl = null;
-      if (imagenFile) {
-        const formData = new FormData();
-        formData.append('file', imagenFile);
-        formData.append('productoNombre', formProd.nombre);
-        formData.append('tiendaId', storeData.id.toString());
+      let uploadedUrls = [];
+      if (imagenFiles.length > 0) {
+        for (const file of imagenFiles) {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('productoNombre', formProd.nombre);
+          formData.append('tiendaId', storeData.id.toString());
 
-        const uploadRes = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/upload/image`, formData, {
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        uploadedUrl = uploadRes.data.url;
+          const uploadRes = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/upload/image`, formData, {
+            headers: { 
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          uploadedUrls.push(uploadRes.data.url);
+        }
       }
 
       const payload: any = {
         nombre: formProd.nombre,
+        descripcion: formProd.descripcion,
         precio: parseFloat(formProd.precio),
         tiendaId: storeData.id,
       };
+
+      let allImageUrls: string[] = [];
+      if (isEditMode) {
+        allImageUrls = [...existingImages.map(img => img.url), ...uploadedUrls];
+      } else {
+        allImageUrls = [...uploadedUrls];
+      }
 
       if (!isEditMode) {
         payload.stock = 10; // Solo al crear
       }
 
-      if (uploadedUrl) payload.imagenUrl = uploadedUrl;
+      if (imagesModified || !isEditMode) {
+        if (allImageUrls.length > 0) {
+          payload.imagenUrl = allImageUrls[0];
+          payload.imagenes = allImageUrls.map((url, idx) => ({ url, orden: idx }));
+        } else {
+          payload.imagenUrl = null;
+          payload.imagenes = [];
+        }
+      }
+
       if (finalCategoriaId) payload.categoriaId = Number(finalCategoriaId);
 
       if (isEditMode && currentEditId) {
@@ -118,8 +139,10 @@ export default function ProductosDashboard() {
     setIsModalOpen(false);
     setIsEditMode(false);
     setCurrentEditId(null);
-    setFormProd({ nombre: '', precio: '', categoriaId: '' });
-    setImagenFile(null);
+    setFormProd({ nombre: '', precio: '', categoriaId: '', descripcion: '' });
+    setImagenFiles([]);
+    setExistingImages([]);
+    setImagesModified(false);
   };
 
   const handleOpenEdit = (p: any) => {
@@ -128,17 +151,29 @@ export default function ProductosDashboard() {
     setFormProd({ 
       nombre: p.nombre, 
       precio: p.precio.toString(), 
-      categoriaId: p.categoriaId ? p.categoriaId.toString() : '' 
+      categoriaId: p.categoriaId ? p.categoriaId.toString() : '',
+      descripcion: p.descripcion || '' 
     });
-    setImagenFile(null);
+    setImagenFiles([]);
+    setExistingImages(p.imagenes?.length > 0 ? p.imagenes : (p.imagenUrl ? [{url: p.imagenUrl}] : []));
+    setImagesModified(false);
     setIsModalOpen(true);
   };
 
   const handleOpenCreate = () => {
+    const limiteProductos = storeData.limiteProductosPersonalizado !== null 
+      ? storeData.limiteProductosPersonalizado 
+      : storeData.plan?.limiteProductos;
+
+    if (limiteProductos !== -1 && productos.length >= limiteProductos) {
+      alert(`Has alcanzado el límite de productos de tu plan (${limiteProductos}).`);
+      return;
+    }
+
     setIsEditMode(false);
     setCurrentEditId(null);
-    setFormProd({ nombre: '', precio: '', categoriaId: '' });
-    setImagenFile(null);
+    setFormProd({ nombre: '', precio: '', categoriaId: '', descripcion: '' });
+    setImagenFiles([]);
     setIsModalOpen(true);
   };
 
@@ -246,16 +281,93 @@ export default function ProductosDashboard() {
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Imagen del Producto</label>
+                  <label className="form-label">Descripción</label>
+                  <textarea 
+                    className="form-input" 
+                    value={formProd.descripcion}
+                    onChange={e => setFormProd({...formProd, descripcion: e.target.value})}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    Imágenes del Producto 
+                    <span className="text-muted" style={{fontSize: '0.8rem', marginLeft: '0.5rem'}}>
+                      (Max. {storeData.plan?.limiteImagenesPorProducto || 1})
+                    </span>
+                  </label>
+                  
+                  {isEditMode && existingImages.length > 0 && (
+                    <div className="mb-4">
+                      <div className="text-sm text-muted mb-2">Imágenes actuales (haz clic en la 'x' para eliminar):</div>
+                      <div className="flex gap-2 flex-wrap">
+                        {existingImages.map((img, idx) => (
+                          <div key={idx} className="relative w-20 h-20 border rounded overflow-hidden">
+                            <img src={img.url} alt="img" className="w-full h-full object-cover" />
+                            <button 
+                              type="button"
+                              style={{
+                                position: 'absolute',
+                                top: '4px',
+                                right: '4px',
+                                background: '#ef4444',
+                                color: 'white',
+                                border: '2px solid white',
+                                borderRadius: '50%',
+                                width: '26px',
+                                height: '26px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+                                zIndex: 10
+                              }}
+                              onClick={() => {
+                                const newArr = [...existingImages];
+                                newArr.splice(idx, 1);
+                                setExistingImages(newArr);
+                                setImagesModified(true);
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <input 
                     type="file" 
                     accept="image/*"
+                    multiple={(storeData.plan?.limiteImagenesPorProducto || 1) > 1}
                     className="form-input"
-                    onChange={e => setImagenFile(e.target.files?.[0] || null)}
+                    onChange={e => {
+                      const files = Array.from(e.target.files || []);
+                      const limit = storeData.plan?.limiteImagenesPorProducto || 1;
+                      if (limit === 1) {
+                        setExistingImages([]);
+                        setImagenFiles(files.slice(0, 1));
+                      } else {
+                        if (existingImages.length + files.length > limit) {
+                          alert(`Tu plan permite máximo ${limit} imagen(es) en total.`);
+                          setImagenFiles(files.slice(0, limit - existingImages.length));
+                        } else {
+                          setImagenFiles(files);
+                        }
+                      }
+                      setImagesModified(true);
+                    }}
                   />
+                  {imagenFiles.length > 0 && (
+                    <div className="text-sm mt-1 text-muted">
+                      {imagenFiles.length} nueva(s) imagen(es) seleccionada(s)
+                    </div>
+                  )}
                 </div>
                 
-                {(storeData?.plan?.nivel || 0) >= 5 && (
+                {(storeData?.plan?.nivel || 0) >= 2 && (
                   <div className="form-group border-t mt-4 pt-4">
                     <label className="form-label">Categoría</label>
                     <select 

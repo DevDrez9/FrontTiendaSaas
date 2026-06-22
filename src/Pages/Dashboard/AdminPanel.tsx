@@ -70,6 +70,28 @@ export default function AdminPanel() {
     }
   };
 
+  const handleUpdateLimit = async (tiendaId: number, currentLimit: number | null | undefined) => {
+    const limitStr = prompt('¿Cuál es el límite personalizado de productos? (Deja vacío o escribe -1 para usar el límite del plan)', currentLimit?.toString() || '');
+    if (limitStr === null) return;
+    
+    let limitValue: number | null = parseInt(limitStr);
+    if (isNaN(limitValue) || limitValue === -1 || limitStr.trim() === '') {
+      limitValue = null;
+    }
+
+    try {
+      await axios.patch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/tiendas/admin/${tiendaId}/limit`, 
+        { limiteProductosPersonalizado: limitValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchTiendasAndPlanes();
+      alert('Límite actualizado correctamente');
+    } catch (error) {
+      console.error(error);
+      alert('Error al actualizar el límite');
+    }
+  };
+
   if (user?.rol !== 'ADMIN') return <div className="p-8 text-danger">Acceso Denegado</div>;
 
   return (
@@ -95,6 +117,7 @@ export default function AdminPanel() {
                   <th>Plan Actual</th>
                   <th>Vigencia</th>
                   <th>Estado</th>
+                  <th>Límite Prod.</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -134,13 +157,21 @@ export default function AdminPanel() {
                       </span>
                     </td>
                     <td>
-                      <div className="flex gap-2">
+                      <span className="text-sm font-semibold">
+                        {tienda.limiteProductosPersonalizado !== null ? tienda.limiteProductosPersonalizado : 'Plan'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="flex gap-2 flex-wrap">
                         {tienda.planId && (
-                          <button className="btn btn-primary" style={{ padding: '0.25rem 0.75rem' }} onClick={() => handleUpdatePlan(tienda.id, tienda.planId, true)}>
+                          <button className="btn btn-primary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }} onClick={() => handleUpdatePlan(tienda.id, tienda.planId, true)}>
                             Renovar
                           </button>
                         )}
-                        <button className="btn btn-danger" style={{ padding: '0.25rem 0.75rem' }} onClick={() => handleDelete(tienda.id)}>
+                        <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }} onClick={() => handleUpdateLimit(tienda.id, tienda.limiteProductosPersonalizado)}>
+                          Límite
+                        </button>
+                        <button className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }} onClick={() => handleDelete(tienda.id)}>
                           Eliminar
                         </button>
                       </div>

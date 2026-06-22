@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
+import AddToCartModal from './AddToCartModal';
 import { ShoppingCart, Plus } from 'lucide-react';
 import './Storefront.css';
 
@@ -10,11 +12,12 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
 
   const { addToCart, items, getTotal } = useCartStore();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [selectedProductForCart, setSelectedProductForCart] = useState<any>(null);
 
   const totalItems = items.reduce((acc, item) => acc + item.cantidad, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ paddingBottom: '5rem' }}>
+    <div className="min-h-screen bg-gray-50 flex flex-col" style={{ paddingBottom: '5rem' }}>
       <header className="bg-white shadow-sm sticky" style={{ top: 0, zIndex: 40 }}>
         <div className="container flex justify-between items-center py-4">
           <div>
@@ -49,11 +52,13 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
             {productos.map(p => (
               <div key={p.id} className="card store-product-card flex flex-col">
                 <div className="store-image-wrapper bg-gray-50" style={{ aspectRatio: '1/1' }}>
-                  {p.imagenUrl ? (
-                    <img src={p.imagenUrl} alt={p.nombre} className="w-full h-full" style={{ objectFit: 'cover' }} />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted">Sin Imagen</div>
-                  )}
+                  <div style={{ display: 'block', height: '100%' }}>
+                    {p.imagenUrl ? (
+                      <img src={p.imagenUrl} alt={p.nombre} className="w-full h-full" style={{ objectFit: 'cover' }} />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted">Sin Imagen</div>
+                    )}
+                  </div>
                   {p.enOferta && (
                     <span className="absolute badge badge-danger" style={{ top: '8px', left: '8px' }}>
                       OFERTA
@@ -74,12 +79,7 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
                       )}
                     </div>
                     <button 
-                      onClick={() => addToCart(storeData.id, {
-                        id: p.id, 
-                        nombre: p.nombre, 
-                        precio: Number(p.enOferta && p.precioOferta ? p.precioOferta : p.precio),
-                        imagenUrl: p.imagenUrl
-                      })}
+                      onClick={() => setSelectedProductForCart(p)}
                       className="btn btn-primary rounded-full p-2"
                       title="Agregar al carrito"
                     >
@@ -92,6 +92,28 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
           </div>
         )}
       </main>
+
+      {/* Footer Simple */}
+      <footer className="mt-auto" style={{ backgroundColor: '#111827', color: '#d1d5db', padding: '3rem 0 1rem' }}>
+        <div className="container grid gap-8" style={{ maxWidth: '1280px', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+          <div>
+            <h3 className="text-xl font-bold mb-4" style={{ color: '#fff', margin: '0 0 1rem 0' }}>{config?.nombreSitio || storeData.nombre}</h3>
+            <p className="text-sm" style={{ color: '#9ca3af', margin: 0 }}>
+              {storeData.descripcion || 'La mejor tienda en línea construida con esta plataforma.'}
+            </p>
+          </div>
+          <div>
+            <h4 className="font-bold mb-4" style={{ color: '#fff', margin: '0 0 1rem 0' }}>¿Quieres tu propia tienda?</h4>
+            <p className="text-sm mb-4" style={{ color: '#9ca3af' }}>Crea tu propio catálogo en línea en minutos con nuestra plataforma.</p>
+            <a href="/" className="btn btn-primary" style={{ display: 'inline-block', textDecoration: 'none', backgroundColor: colorPrimario, color: '#ffffff' }}>
+              Crea tu catálogo gratis
+            </a>
+          </div>
+        </div>
+        <div className="container mt-8 pt-8 text-sm text-center" style={{ maxWidth: '1280px', borderTop: '1px solid #1f2937', color: '#9ca3af', marginTop: '2rem', paddingTop: '2rem' }}>
+          &copy; {new Date().getFullYear()} {config?.nombreSitio || storeData.nombre}. Todos los derechos reservados.
+        </div>
+      </footer>
 
       {totalItems > 0 && (
         <div className="store-floating-cart">
@@ -113,6 +135,13 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
         onClose={() => setIsCheckoutOpen(false)} 
         colorPrimario={colorPrimario}
         whatsapp={config?.whatsapp}
+      />
+
+      <AddToCartModal
+        isOpen={!!selectedProductForCart}
+        onClose={() => setSelectedProductForCart(null)}
+        producto={selectedProductForCart}
+        tiendaId={storeData.id}
       />
     </div>
   );
