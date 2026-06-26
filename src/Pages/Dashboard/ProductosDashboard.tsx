@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import { Plus, Trash2 } from 'lucide-react';
 import './Dashboard.css';
+import { fixImageUrl } from '../../config/api';
 
 export default function ProductosDashboard() {
   const { token } = useAuthStore();
@@ -302,7 +303,7 @@ export default function ProductosDashboard() {
                       <div className="flex gap-2 flex-wrap">
                         {existingImages.map((img, idx) => (
                           <div key={idx} className="relative w-20 h-20 border rounded overflow-hidden">
-                            <img src={img.url} alt="img" className="w-full h-full object-cover" />
+                            <img src={fixImageUrl(img.url)} alt="img" className="w-full h-full object-cover" />
                             <button 
                               type="button"
                               style={{

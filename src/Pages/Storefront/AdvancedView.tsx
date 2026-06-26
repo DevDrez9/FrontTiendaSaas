@@ -5,6 +5,7 @@ import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
 import AddToCartModal from './AddToCartModal';
 import './Storefront.css';
+import { fixImageUrl } from '../../config/api';
 
 export default function AdvancedView({ storeData, productos }: { storeData: any, productos: any[] }) {
   const config = storeData.configWeb;
@@ -43,7 +44,7 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
               <Menu size={24} color={colorPrimario} />
             </button>
             {config?.logoUrl ? (
-              <img src={config.logoUrl} alt={config.nombreSitio} style={{ height: '2.5rem' }} />
+              <img src={fixImageUrl(config.logoUrl)} alt={config.nombreSitio} style={{ height: '2.5rem' }} />
             ) : (
               <h1 className="text-2xl" style={{ color: colorPrimario, fontWeight: 900, letterSpacing: '-0.025em', margin: 0 }}>
                 {config?.nombreSitio || storeData.nombre}
@@ -136,7 +137,7 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
                     <Link to={`/producto/${p.id}`} style={{ display: 'block', height: '100%' }}>
                       {p.imagenUrl ? (
                         <img 
-                          src={p.imagenUrl} 
+                          src={fixImageUrl(p.imagenUrl)} 
                           alt={p.nombre} 
                           className="w-full h-full"
                           style={{ objectFit: 'cover' }} 
@@ -149,7 +150,7 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
                     <div style={{ display: 'block', height: '100%' }}>
                       {p.imagenUrl ? (
                         <img 
-                          src={p.imagenUrl} 
+                          src={fixImageUrl(p.imagenUrl)} 
                           alt={p.nombre} 
                           className="w-full h-full"
                           style={{ objectFit: 'cover' }} 

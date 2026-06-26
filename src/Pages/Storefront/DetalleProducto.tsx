@@ -5,6 +5,7 @@ import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
 import './Storefront.css';
+import { fixImageUrl } from '../../config/api';
 
 export default function DetalleProducto() {
   const { id } = useParams();
@@ -73,7 +74,7 @@ export default function DetalleProducto() {
           <div className="flex items-center gap-4">
             <Link to={`/${producto.tienda?.dominio || ''}`} style={{ textDecoration: 'none' }}>
               {config?.logoUrl ? (
-                <img src={config.logoUrl} alt={config?.nombreSitio || producto.tienda?.nombre} style={{ height: '2.5rem' }} />
+                <img src={fixImageUrl(config.logoUrl)} alt={config?.nombreSitio || producto.tienda?.nombre} style={{ height: '2.5rem' }} />
               ) : (
                 <h1 className="text-2xl" style={{ color: colorPrimario, fontWeight: 900, letterSpacing: '-0.025em', margin: 0 }}>
                   {config?.nombreSitio || producto.tienda?.nombre}
@@ -111,7 +112,7 @@ export default function DetalleProducto() {
         <div className="product-gallery">
           <div className="main-image-container">
             {activeImage ? (
-              <img src={activeImage} alt={producto.nombre} className="main-image" />
+              <img src={fixImageUrl(activeImage)} alt={producto.nombre} className="main-image" />
             ) : (
               <div className="no-image">Sin imagen</div>
             )}
@@ -125,7 +126,7 @@ export default function DetalleProducto() {
                   className={`thumbnail ${activeImage === img.url ? 'active' : ''}`}
                   onClick={() => setActiveImage(img.url)}
                 >
-                  <img src={img.url} alt={`Vista de ${producto.nombre}`} />
+                  <img src={fixImageUrl(img.url)} alt={`Vista de ${producto.nombre}`} />
                 </div>
               ))}
             </div>

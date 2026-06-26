@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import './Dashboard.css';
+import { fixImageUrl } from '../../config/api';
 
 export default function ConfiguracionDashboard() {
   const { token } = useAuthStore();

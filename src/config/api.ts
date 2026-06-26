@@ -8,3 +8,14 @@ export const api = axios.create({
 });
 
 export const getApiUrl = () => API_URL;
+
+export const fixImageUrl = (url?: string) => {
+  if (!url) return '';
+  if (url.startsWith('http://localhost:3000')) {
+    return url.replace('http://localhost:3000', API_URL);
+  }
+  if (url.startsWith('/uploads')) {
+    return `${API_URL}${url}`;
+  }
+  return url;
+};

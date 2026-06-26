@@ -5,6 +5,7 @@ import CheckoutModal from './CheckoutModal';
 import AddToCartModal from './AddToCartModal';
 import { ShoppingCart, Plus } from 'lucide-react';
 import './Storefront.css';
+import { fixImageUrl } from '../../config/api';
 
 export default function SimpleView({ storeData, productos }: { storeData: any, productos: any[] }) {
   const config = storeData.configWeb;
@@ -54,7 +55,7 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
                 <div className="store-image-wrapper bg-gray-50" style={{ aspectRatio: '1/1' }}>
                   <div style={{ display: 'block', height: '100%' }}>
                     {p.imagenUrl ? (
-                      <img src={p.imagenUrl} alt={p.nombre} className="w-full h-full" style={{ objectFit: 'cover' }} />
+                      <img src={fixImageUrl(p.imagenUrl)} alt={p.nombre} className="w-full h-full" style={{ objectFit: 'cover' }} />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted">Sin Imagen</div>
                     )}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, ShoppingCart } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
+import { fixImageUrl } from '../../config/api';
 
 export default function AddToCartModal({ 
   isOpen, 
@@ -42,7 +43,7 @@ export default function AddToCartModal({
         
         <div className="add-modal-image-container">
           {producto.imagenUrl ? (
-            <img src={producto.imagenUrl} alt={producto.nombre} />
+            <img src={fixImageUrl(producto.imagenUrl)} alt={producto.nombre} />
           ) : (
             <div style={{ color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <ShoppingCart size={40} style={{ opacity: 0.2, marginBottom: '0.5rem' }} />
