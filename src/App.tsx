@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./Pages/Landing/LandingPage";
 import LoginPage from "./Pages/Auth/LoginPage";
 import RegisterPage from "./Pages/Auth/RegisterPage";
+import RecuperarPage from "./Pages/Auth/RecuperarPage";
 import DashboardLayout from "./Pages/Dashboard/DashboardLayout";
 import ProductosDashboard from "./Pages/Dashboard/ProductosDashboard";
 import PedidosDashboard from "./Pages/Dashboard/PedidosDashboard";
@@ -9,6 +10,8 @@ import ConfiguracionDashboard from "./Pages/Dashboard/ConfiguracionDashboard";
 import CategoriasDashboard from "./Pages/Dashboard/CategoriasDashboard";
 import DashboardHome from "./Pages/Dashboard/DashboardHome";
 import AdminPanel from "./Pages/Dashboard/AdminPanel";
+import SuscripcionDashboard from "./Pages/Dashboard/SuscripcionDashboard";
+import PagarSuscripcionPage from "./Pages/Onboarding/PagarSuscripcionPage";
 import StoreRouter from "./Pages/Storefront/StoreRouter";
 import DetalleProducto from "./Pages/Storefront/DetalleProducto";
 
@@ -19,6 +22,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/recuperar" element={<RecuperarPage />} />
+        <Route path="/pagar-suscripcion" element={<PagarSuscripcionPage />} />
         
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardLayout />}>
@@ -28,6 +33,7 @@ function App() {
           <Route path="pedidos" element={<PedidosDashboard />} />
           <Route path="configuracion" element={<ConfiguracionDashboard />} />
           <Route path="admin" element={<AdminPanel />} />
+          <Route path="suscripcion" element={<SuscripcionDashboard />} />
         </Route>
 
         {/* Dynamic Store Routes */}

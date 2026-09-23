@@ -12,6 +12,11 @@ export default function ProductosDashboard() {
   const [categorias, setCategorias] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limitPerPage = 10;
+  
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -22,9 +27,21 @@ export default function ProductosDashboard() {
   const [imagesModified, setImagesModified] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
+  const fetchProductsPage = async (pageNumber: number, storeId?: number) => {
+    const targetStoreId = storeId || storeData?.id;
+    if (!targetStoreId) return;
+    try {
+      const resProd = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/producto/tienda/${targetStoreId}?page=${pageNumber}&limit=${limitPerPage}`);
+      setProductos(resProd.data.data || []);
+      setTotalPages(resProd.data.meta?.pages || 1);
+      setPage(pageNumber);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const fetchData = async () => {
     try {
-      // 1. Get user's stores
       const resStores = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/tiendas`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -33,11 +50,8 @@ export default function ProductosDashboard() {
       setStoreData(miTienda);
 
       if (miTienda) {
-        // 2. Get products for this store
-        const resProd = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/producto/tienda/${miTienda.id}`);
-        setProductos(resProd.data.data || []);
+        await fetchProductsPage(1, miTienda.id);
         
-        // 3. Get categories (only if plan allows)
         if ((miTienda.plan?.nivel || 0) >= 2) {
           const resCat = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/categoria/tienda/${miTienda.id}`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -102,7 +116,7 @@ export default function ProductosDashboard() {
       }
 
       if (!isEditMode) {
-        payload.stock = 10; // Solo al crear
+        payload.stock = 10; 
       }
 
       if (imagesModified || !isEditMode) {
@@ -121,14 +135,15 @@ export default function ProductosDashboard() {
         await axios.patch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/producto/${currentEditId}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        await fetchProductsPage(page); // Reload current page
       } else {
         await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/producto`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        await fetchProductsPage(1); // Go to first page to see the new product
       }
       
       handleCloseModal();
-      fetchData(); // Refetch
     } catch (error: any) {
       alert(error.response?.data?.message || 'Error al guardar el producto');
     } finally {
@@ -166,11 +181,9 @@ export default function ProductosDashboard() {
       ? storeData.limiteProductosPersonalizado 
       : storeData.plan?.limiteProductos;
 
-    if (limiteProductos !== -1 && productos.length >= limiteProductos) {
-      alert(`Has alcanzado el límite de productos de tu plan (${limiteProductos}).`);
-      return;
-    }
-
+    // We can't simply check productos.length because of pagination, we need total count.
+    // Assuming backend enforces limit, but for frontend alert, we might rely on a totalCount if available.
+    // If not, we just open and let backend reject.
     setIsEditMode(false);
     setCurrentEditId(null);
     setFormProd({ nombre: '', precio: '', categoriaId: '', descripcion: '' });
@@ -184,7 +197,7 @@ export default function ProductosDashboard() {
       await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/producto/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchData();
+      fetchProductsPage(page);
     } catch(err) {
       alert('Error al eliminar');
     }
@@ -229,7 +242,7 @@ export default function ProductosDashboard() {
 
       {productos.length === 0 ? (
         <div className="empty-state">
-          Aún no tienes productos. ¡Agrega el primero!
+          {page > 1 ? 'No hay productos en esta página.' : 'Aún no tienes productos. ¡Agrega el primero!'}
         </div>
       ) : (
         <div className="dashboard-products-grid">
@@ -248,6 +261,28 @@ export default function ProductosDashboard() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-8">
+          <button 
+            className="btn btn-secondary" 
+            disabled={page === 1}
+            onClick={() => fetchProductsPage(page - 1)}
+          >
+            Anterior
+          </button>
+          <span className="py-2 px-4 bg-white rounded shadow-sm border font-medium text-sm">
+            Página {page} de {totalPages}
+          </span>
+          <button 
+            className="btn btn-secondary" 
+            disabled={page >= totalPages}
+            onClick={() => fetchProductsPage(page + 1)}
+          >
+            Siguiente
+          </button>
         </div>
       )}
 

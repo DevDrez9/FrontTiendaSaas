@@ -11,7 +11,9 @@ interface User {
 interface AuthState {
   token: string | null;
   user: User | null;
-  setAuth: (token: string, user: User) => void;
+  suscripcionActiva: boolean;
+  setAuth: (token: string, user: User, suscripcionActiva?: boolean) => void;
+  setSuscripcionActiva: (activa: boolean) => void;
   logout: () => void;
 }
 
@@ -20,8 +22,10 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       token: null,
       user: null,
-      setAuth: (token, user) => set({ token, user }),
-      logout: () => set({ token: null, user: null }),
+      suscripcionActiva: false,
+      setAuth: (token, user, suscripcionActiva = false) => set({ token, user, suscripcionActiva }),
+      setSuscripcionActiva: (suscripcionActiva) => set({ suscripcionActiva }),
+      logout: () => set({ token: null, user: null, suscripcionActiva: false }),
     }),
     {
       name: 'auth-storage',

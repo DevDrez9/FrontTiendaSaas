@@ -4,9 +4,10 @@ import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import { LogOut, Package, Settings, LayoutDashboard, Shield, ShoppingCart, Tags, Menu, X } from 'lucide-react';
 import './DashboardLayout.css';
+import { tieneSuscripcionActiva } from '../../utils/suscripcion';
 
 export default function DashboardLayout() {
-  const { token, user, logout } = useAuthStore();
+  const { token, user, logout, setSuscripcionActiva } = useAuthStore();
   const navigate = useNavigate();
   const [storeData, setStoreData] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,12 +20,29 @@ export default function DashboardLayout() {
       axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/tiendas`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then(res => {
-        setStoreData(res.data[0]);
-      }).catch(err => console.error(err));
+        const tienda = res.data[0];
+        // Se revisa contra el servidor en cada carga del panel (no solo al loguear),
+        // así también se bloquea si la suscripción venció con la sesión abierta.
+        const activa = tieneSuscripcionActiva(tienda, user?.rol);
+        setSuscripcionActiva(activa);
+        if (!activa) {
+          navigate('/pagar-suscripcion', { replace: true });
+          return;
+        }
+        setStoreData(tienda);
+      }).catch(err => {
+        console.error(err);
+        if (err.response?.status === 401) {
+          logout();
+          navigate('/login', { replace: true });
+        }
+      });
     }
   }, [token, navigate]);
 
   if (!token) return null;
+  // No mostrar el panel hasta confirmar la suscripción (evita que se vea un instante)
+  if (!storeData && user?.rol !== 'ADMIN') return <div className="p-8 text-muted">Cargando...</div>;
 
   const showCategories = storeData && storeData.plan && storeData.plan.nivel >= 2;
 
@@ -64,6 +82,10 @@ export default function DashboardLayout() {
           <Link to="/dashboard/pedidos" className="nav-item">
             <ShoppingCart size={20} />
             Pedidos
+          </Link>
+          <Link to="/dashboard/suscripcion" className="nav-item">
+            <Tags size={20} />
+            Mi Suscripción
           </Link>
           <Link to="/dashboard/configuracion" className="nav-item">
             <Settings size={20} />

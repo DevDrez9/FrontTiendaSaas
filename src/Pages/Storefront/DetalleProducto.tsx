@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
+import TiendaNoDisponible, { esTiendaNoDisponible } from './TiendaNoDisponible';
 import './Storefront.css';
 import { fixImageUrl } from '../../config/api';
 
@@ -11,6 +12,7 @@ export default function DetalleProducto() {
   const { id } = useParams();
   const [producto, setProducto] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [noDisponible, setNoDisponible] = useState(false);
   const [activeImage, setActiveImage] = useState<string>('');
   const [cantidad, setCantidad] = useState(1);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -30,6 +32,7 @@ export default function DetalleProducto() {
         }
       } catch (err) {
         console.error('Error fetching product', err);
+        if (esTiendaNoDisponible(err)) setNoDisponible(true);
       } finally {
         setLoading(false);
       }
@@ -40,6 +43,8 @@ export default function DetalleProducto() {
   if (loading) {
     return <div className="p-8 text-center text-muted">Cargando detalles del producto...</div>;
   }
+
+  if (noDisponible) return <TiendaNoDisponible />;
 
   if (!producto) {
     return <div className="p-8 text-center text-danger">Producto no encontrado</div>;

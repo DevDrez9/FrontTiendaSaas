@@ -114,3 +114,148 @@
   display: flex;
   gap: 0.5rem;
 }
+
+/* =========================================
+   Suscripción
+========================================= */
+.bg-danger-light { background-color: #fee2e2; color: var(--danger); }
+.badge-neutral { background-color: var(--bg-color); color: var(--text-muted); border: 1px solid var(--border-color); }
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.plan-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 1.5rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+.plan-option > div { width: 100%; }
+.plan-option:hover {
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.plan-option--selected,
+.plan-option--selected:hover {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.plan-option:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+}
+
+.plan-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.plan-price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-top: auto;
+}
+
+.plan-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+}
+
+.qr-frame {
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+.qr-frame img {
+  display: block;
+  width: 240px;
+  height: 240px;
+  max-width: 100%;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--primary);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+}
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* =========================================
+   Dominio de la tienda
+========================================= */
+.dominio-actual {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.875rem 1rem;
+  background-color: var(--primary-light);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-lg);
+  color: var(--primary);
+}
+.dominio-link {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+.dominio-link:hover { text-decoration: underline; }
+.dominio-copiar { padding: 0.375rem 0.75rem; font-size: 0.8125rem; }
+
+.dominio-input {
+  display: flex;
+  align-items: stretch;
+}
+.dominio-prefijo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-right: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+.dominio-input .form-input {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  min-width: 0;
+}
+@media (max-width: 480px) {
+  .dominio-prefijo { display: none; }
+  .dominio-input .form-input { border-radius: var(--radius-md); }
+}

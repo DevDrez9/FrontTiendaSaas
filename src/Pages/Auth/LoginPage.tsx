@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import './Auth.css';
@@ -10,6 +10,8 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const mensaje = (location.state as any)?.mensaje as string | undefined;
   const setAuth = useAuthStore(state => state.setAuth);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -23,12 +25,14 @@ export default function LoginPage() {
         password,
       });
 
-      const { access_token, user } = response.data;
-      setAuth(access_token, user);
-      
-      navigate('/dashboard');
+      const { access_token, user, suscripcionActiva } = response.data;
+      setAuth(access_token, user, !!suscripcionActiva);
+
+      // Sin suscripción pagada no se entra al panel
+      navigate(suscripcionActiva ? '/dashboard' : '/pagar-suscripcion', { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      const m = err.response?.data?.message;
+      setError((Array.isArray(m) ? m[0] : m) || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
@@ -55,6 +59,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             {error && <div className="error-message animate-fade-in">{error}</div>}
+            {mensaje && !error && <div className="success-message animate-fade-in">{mensaje}</div>}
             
             <div className="form-group m-0">
               <label className="form-label">Email</label>
@@ -79,6 +84,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
               />
             </div>
+            <Link to="/recuperar" className="auth-link auth-forgot">¿Olvidaste tu contraseña?</Link>
 
             <button type="submit" disabled={loading} className="btn btn-primary w-full mt-4">
               {loading ? 'Cargando...' : 'Entrar'}

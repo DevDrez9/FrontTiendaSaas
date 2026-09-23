@@ -42,15 +42,23 @@ export default function PedidosDashboard() {
       );
       // Actualizar localmente
       setPedidos(pedidos.map(p => p.id === id ? { ...p, estado: nuevoEstado } : p));
-    } catch(err) {
-      alert('Error al actualizar el estado del pedido');
+    } catch(err: any) {
+      alert(err.response?.data?.message || 'Error al actualizar el estado del pedido');
     }
   };
 
   if (loading) return <div className="p-8 text-muted">Cargando pedidos...</div>;
   if (!storeData) return <div className="p-8 text-muted">No se encontró la tienda.</div>;
 
-  const estados = ['PENDIENTE', 'CONFIRMADA', 'EN_PROCESO', 'ENVIADA', 'ENTREGADA', 'CANCELADA'];
+  // Mismas transiciones que valida el backend (VentaService.updateEstado)
+  const transiciones: Record<string, string[]> = {
+    PENDIENTE: ['CONFIRMADA', 'CANCELADA'],
+    CONFIRMADA: ['EN_PROCESO', 'CANCELADA'],
+    EN_PROCESO: ['ENVIADA', 'CANCELADA'],
+    ENVIADA: ['ENTREGADA', 'CANCELADA'],
+    ENTREGADA: [],
+    CANCELADA: [],
+  };
 
   return (
     <div className="p-8">
@@ -87,10 +95,11 @@ export default function PedidosDashboard() {
                       value={pedido.estado} 
                       onChange={(e) => updateEstado(pedido.id, e.target.value)}
                       className="form-input"
+                      disabled={!(transiciones[pedido.estado] || []).length}
                       style={{ padding: '0.25rem 0.5rem', width: 'auto' }}
                     >
-                      {estados.map(est => (
-                        <option key={est} value={est}>{est}</option>
+                      {[pedido.estado, ...(transiciones[pedido.estado] || [])].map(est => (
+                        <option key={est} value={est}>{est.replace('_', ' ')}</option>
                       ))}
                     </select>
                   </td>

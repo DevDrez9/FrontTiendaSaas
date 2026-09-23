@@ -25,12 +25,14 @@ export default function RegisterPage() {
         nombre
       });
 
-      const { access_token, user } = response.data;
-      setAuth(access_token, user);
-      
-      navigate('/dashboard');
+      const { access_token, user, suscripcionActiva } = response.data;
+      setAuth(access_token, user, !!suscripcionActiva);
+
+      // Sin suscripción pagada no se entra al panel
+      navigate(suscripcionActiva ? '/dashboard' : '/pagar-suscripcion', { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al registrarse');
+      const m = err.response?.data?.message;
+      setError((Array.isArray(m) ? m[0] : m) || 'Error al registrarse');
     } finally {
       setLoading(false);
     }

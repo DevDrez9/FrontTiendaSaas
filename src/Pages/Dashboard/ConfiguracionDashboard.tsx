@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import './Dashboard.css';
 import { fixImageUrl } from '../../config/api';
+import DominioTiendaCard from './DominioTiendaCard';
 
 export default function ConfiguracionDashboard() {
   const { token } = useAuthStore();
@@ -111,6 +112,11 @@ export default function ConfiguracionDashboard() {
 
   return (
     <div className="p-8">
+      <DominioTiendaCard
+        tiendaId={storeData.id}
+        dominioActual={storeData.dominio}
+        onCambiado={(dominio) => setStoreData({ ...storeData, dominio })}
+      />
       <div className="card p-8 max-w-2xl">
         <h2 className="text-2xl font-bold mb-6">Configuración de Tienda</h2>
         

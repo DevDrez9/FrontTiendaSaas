@@ -56,7 +56,10 @@ export default function CheckoutModal({ isOpen, onClose, colorPrimario = '#3182c
       clearCart();
     } catch (error) {
       console.error(error);
-      alert('Error al procesar el pedido. Intente nuevamente.');
+      const data = (error as any)?.response?.data;
+      alert(data?.code === 'TIENDA_NO_DISPONIBLE'
+        ? 'Esta tienda no está recibiendo pedidos en este momento.'
+        : 'Error al procesar el pedido. Intente nuevamente.');
     } finally {
       setLoading(false);
     }
