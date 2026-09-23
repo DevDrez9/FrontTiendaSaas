@@ -93,8 +93,7 @@ export default function ProductosDashboard() {
 
           const uploadRes = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/upload/image`, formData, {
             headers: { 
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data'
+              Authorization: `Bearer ${token}`
             }
           });
           uploadedUrls.push(uploadRes.data.url);
