@@ -5,6 +5,16 @@ import { Plus, Trash2 } from 'lucide-react';
 import './Dashboard.css';
 import { fixImageUrl } from '../../config/api';
 
+// Mismos formatos y tamaño que acepta el backend en /upload/image
+const FORMATOS_IMAGEN = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+const MAX_IMAGEN_MB = 5;
+const validarImagen = (f: File): string | null => {
+  if (!FORMATOS_IMAGEN.includes(f.type)) return `"${f.name}" no es un formato permitido (usa JPG, PNG, WEBP, GIF o AVIF).`;
+  if (f.size > MAX_IMAGEN_MB * 1024 * 1024) return `"${f.name}" pesa más de ${MAX_IMAGEN_MB} MB.`;
+  return null;
+};
+
+
 export default function ProductosDashboard() {
   const { token } = useAuthStore();
   const [storeData, setStoreData] = useState<any>(null);
@@ -375,11 +385,15 @@ export default function ProductosDashboard() {
 
                   <input 
                     type="file" 
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
                     multiple={(storeData.plan?.limiteImagenesPorProducto || 1) > 1}
                     className="form-input"
                     onChange={e => {
-                      const files = Array.from(e.target.files || []);
+                      const todos = Array.from(e.target.files || []);
+                      const errores = todos.map(validarImagen).filter(Boolean);
+                      if (errores.length) alert(errores.join('\n'));
+                      const files = todos.filter(f => !validarImagen(f));
+                      if (!files.length) { e.target.value = ''; return; }
                       const limit = storeData.plan?.limiteImagenesPorProducto || 1;
                       if (limit === 1) {
                         setExistingImages([]);

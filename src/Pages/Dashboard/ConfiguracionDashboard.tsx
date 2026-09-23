@@ -5,6 +5,16 @@ import './Dashboard.css';
 import { fixImageUrl } from '../../config/api';
 import DominioTiendaCard from './DominioTiendaCard';
 
+// Mismos formatos y tamaño que acepta el backend en /upload/image
+const FORMATOS_IMAGEN = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+const MAX_IMAGEN_MB = 5;
+const validarImagen = (f: File): string | null => {
+  if (!FORMATOS_IMAGEN.includes(f.type)) return `"${f.name}" no es un formato permitido (usa JPG, PNG, WEBP, GIF o AVIF).`;
+  if (f.size > MAX_IMAGEN_MB * 1024 * 1024) return `"${f.name}" pesa más de ${MAX_IMAGEN_MB} MB.`;
+  return null;
+};
+
+
 export default function ConfiguracionDashboard() {
   const { token } = useAuthStore();
   const [storeData, setStoreData] = useState<any>(null);
@@ -97,9 +107,10 @@ export default function ConfiguracionDashboard() {
 
       alert('Configuración guardada correctamente');
       setBannerFile(null); // Reset
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error al guardar configuración');
+      const msg = err?.response?.data?.message;
+      alert(Array.isArray(msg) ? msg.join('\n') : msg || 'Error al guardar configuración');
     } finally {
       setSaving(false);
       setIsUploadingBanner(false);
@@ -202,9 +213,19 @@ export default function ConfiguracionDashboard() {
               )}
               <input 
                 type="file" 
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
                 className="form-input"
-                onChange={e => setBannerFile(e.target.files?.[0] || null)}
+                onChange={e => {
+                  const f = e.target.files?.[0] || null;
+                  const error = f ? validarImagen(f) : null;
+                  if (error) {
+                    alert(error);
+                    e.target.value = '';
+                    setBannerFile(null);
+                    return;
+                  }
+                  setBannerFile(f);
+                }}
               />
               <p className="text-xs text-muted mt-1">Recomendado: 1200x400px</p>
             </div>
