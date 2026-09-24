@@ -7,12 +7,14 @@ export default function AddToCartModal({
   isOpen, 
   onClose, 
   producto, 
-  tiendaId 
+  tiendaId,
+  moneda = 'Bs'
 }: { 
   isOpen: boolean, 
   onClose: () => void, 
   producto: any, 
-  tiendaId: number 
+  tiendaId: number,
+  moneda?: string
 }) {
   const [cantidad, setCantidad] = useState(1);
   const { addToCart } = useCartStore();
@@ -58,10 +60,10 @@ export default function AddToCartModal({
           
           <div className="add-modal-price-row">
             <p className="add-modal-price" style={{ color: 'var(--primary-color, #3b82f6)' }}>
-              Bs{producto.enOferta && producto.precioOferta ? producto.precioOferta : producto.precio}
+              {moneda}{producto.enOferta && producto.precioOferta ? producto.precioOferta : producto.precio}
             </p>
             {producto.enOferta && producto.precioOferta > 0 && (
-              <p className="add-modal-price-old">Bs{producto.precio}</p>
+              <p className="add-modal-price-old">{moneda}{producto.precio}</p>
             )}
           </div>
 
@@ -78,7 +80,7 @@ export default function AddToCartModal({
           </div>
 
           <button className="add-modal-submit" style={{ backgroundColor: 'var(--primary-color, #3b82f6)' }} onClick={handleAdd}>
-            <ShoppingCart size={20} /> Añadir al Carrito • Bs{((producto.enOferta && producto.precioOferta ? producto.precioOferta : producto.precio) * cantidad).toFixed(2)}
+            <ShoppingCart size={20} /> Añadir al Carrito • {moneda}{((producto.enOferta && producto.precioOferta ? producto.precioOferta : producto.precio) * cantidad).toFixed(2)}
           </button>
         </div>
       </div>

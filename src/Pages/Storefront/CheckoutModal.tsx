@@ -8,9 +8,10 @@ interface CheckoutModalProps {
   onClose: () => void;
   colorPrimario?: string;
   whatsapp?: string;
+  moneda?: string;
 }
 
-export default function CheckoutModal({ isOpen, onClose, colorPrimario = '#3182ce', whatsapp }: CheckoutModalProps) {
+export default function CheckoutModal({ isOpen, onClose, colorPrimario = '#3182ce', whatsapp, moneda = 'Bs' }: CheckoutModalProps) {
   const { items, getTotal, tiendaId, clearCart, updateQuantity, removeFromCart } = useCartStore();
   const [cliente, setCliente] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -45,8 +46,8 @@ export default function CheckoutModal({ isOpen, onClose, colorPrimario = '#3182c
       
       if (whatsapp) {
         const text = `¡Hola! Me gustaría realizar un pedido:\n\n` + 
-          items.map(item => `- ${item.cantidad}x ${item.nombre} (Bs${(item.precio * item.cantidad).toFixed(2)})`).join('\n') +
-          `\n\n*Total: Bs${getTotal().toFixed(2)}*\n\n` +
+          items.map(item => `- ${item.cantidad}x ${item.nombre} (${moneda}${(item.precio * item.cantidad).toFixed(2)})`).join('\n') +
+          `\n\n*Total: ${moneda}${getTotal().toFixed(2)}*\n\n` +
           `Mis datos:\nNombre: ${cliente}\nTeléfono: ${telefono}\nDirección: ${direccion}`;
         
         const url = `https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(text)}`;
@@ -101,7 +102,7 @@ export default function CheckoutModal({ isOpen, onClose, colorPrimario = '#3182c
                     <div key={item.id} className="cart-item-row">
                       <div className="cart-item-info">
                         <span className="cart-item-title" title={item.nombre}>{item.nombre}</span>
-                        <span className="cart-item-price">Bs{(item.precio * item.cantidad).toFixed(2)}</span>
+                        <span className="cart-item-price">{moneda}{(item.precio * item.cantidad).toFixed(2)}</span>
                       </div>
                       
                       <div className="cart-item-actions">
@@ -134,7 +135,7 @@ export default function CheckoutModal({ isOpen, onClose, colorPrimario = '#3182c
                   ))}
                   <div className="border-t flex justify-between items-center text-lg font-bold" style={{ marginTop: '0.5rem', paddingTop: '0.5rem' }}>
                     <span>Total</span>
-                    <span style={{ color: colorPrimario }}>Bs{getTotal().toFixed(2)}</span>
+                    <span style={{ color: colorPrimario }}>{moneda}{getTotal().toFixed(2)}</span>
                   </div>
                 </div>
               )}

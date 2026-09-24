@@ -7,8 +7,9 @@ import type { Producto } from '../../Models/Producto';
 interface CardProps {
   producto: Producto;
   onClickCard?: (producto: Producto) => void;
+  moneda?: string;
 };
-const Card: React.FC<CardProps> = ({ producto,onClickCard }) => {
+const Card: React.FC<CardProps> = ({ producto,onClickCard, moneda = 'Bs' }) => {
     return(
       <>
      
@@ -26,7 +27,7 @@ const Card: React.FC<CardProps> = ({ producto,onClickCard }) => {
           {producto.nombre}
         </div>
         <div className="precio">
-          Bs {producto.precio} 
+          {moneda} {producto.precio} 
         </div>
        </div>
      </div>

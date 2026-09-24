@@ -66,7 +66,8 @@ export default function ConfiguracionDashboard() {
         nombreSitio: storeData.nombre,
         colorPrimario: configWeb.colorPrimario,
         colorSecundario: configWeb.colorSecundario,
-        whatsapp: configWeb.whatsapp
+        whatsapp: configWeb.whatsapp,
+        moneda: configWeb.moneda
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -165,11 +166,30 @@ export default function ConfiguracionDashboard() {
 
           <div className="form-group mb-0 border-t pt-4 mt-2">
             <h3 className="text-lg font-bold mb-4">Datos de Contacto y Diseño</h3>
-            <label className="form-label">Número de WhatsApp (con código de país, ej. 5215551234567)</label>
+            
+            <div className="mb-4">
+              <label className="form-label">Tipo de Moneda</label>
+              <select
+                className="form-input"
+                value={configWeb.moneda || 'Bs'}
+                onChange={(e) => setConfigWeb({...configWeb, moneda: e.target.value})}
+              >
+                <option value="Bs">Bs (Bolivianos)</option>
+                <option value="$">$ (Dólares)</option>
+                <option value="S/">S/ (Soles)</option>
+                <option value="ARS">ARS (Pesos Argentinos)</option>
+                <option value="CLP">CLP (Pesos Chilenos)</option>
+                <option value="COP">COP (Pesos Colombianos)</option>
+                <option value="MXN">MXN (Pesos Mexicanos)</option>
+                <option value="€">€ (Euros)</option>
+              </select>
+            </div>
+
+            <label className="form-label">Número de WhatsApp (con código de país, ej. 59170000000)</label>
             <input 
               type="text" 
               className="form-input"
-              placeholder="5215551234567"
+              placeholder="59170000000"
               value={configWeb.whatsapp || ''}
               onChange={(e) => setConfigWeb({...configWeb, whatsapp: e.target.value})}
             />
