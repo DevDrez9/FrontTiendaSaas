@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { ShoppingCart, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, MessageCircle } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
 import TiendaNoDisponible, { esTiendaNoDisponible } from './TiendaNoDisponible';
@@ -66,6 +66,19 @@ export default function DetalleProducto() {
   const config = producto.tienda?.configWeb;
   const colorPrimario = config?.colorPrimario || '#000000';
   const colorSecundario = config?.colorSecundario || '#ffffff';
+
+  const handleWhatsAppOrder = () => {
+    if (!config?.whatsapp) {
+      alert("El vendedor no ha configurado su número de WhatsApp.");
+      return;
+    }
+    const numero = config.whatsapp.replace(/[^0-9]/g, '');
+    const precio = producto.enOferta && producto.precioOferta ? producto.precioOferta : producto.precio;
+    const moneda = config?.moneda || 'Bs';
+    const total = Number(precio) * cantidad;
+    const mensaje = `Hola, quiero hacer un pedido del producto: ${producto.nombre} - Cantidad: ${cantidad} - Total: ${moneda} ${total}`;
+    window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`, '_blank');
+  };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f9fafb' }}>
@@ -163,7 +176,7 @@ export default function DetalleProducto() {
             </div>
           </div>
 
-          <div className="product-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div className="product-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <div className="qty-control" style={{ height: '48px' }}>
               <button 
                 onClick={() => setCantidad(Math.max(1, cantidad - 1))}
@@ -175,7 +188,7 @@ export default function DetalleProducto() {
             
             <button 
               className="btn btn-primary add-to-cart-btn"
-              style={{ flex: 1, height: '48px' }}
+              style={{ flex: 1, minWidth: '200px', height: '48px' }}
               onClick={() => {
                 addToCart(producto.tiendaId, {
                   id: producto.id,
@@ -188,6 +201,14 @@ export default function DetalleProducto() {
               }}
             >
               <ShoppingCart size={20} /> Agregar al Carrito
+            </button>
+
+            <button 
+              className="btn w-full shadow-md"
+              style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'center', backgroundColor: '#25D366', color: '#fff', border: 'none', gap: '0.5rem', alignItems: 'center', height: '48px' }}
+              onClick={(e) => { e.preventDefault(); handleWhatsAppOrder(); }}
+            >
+              <MessageCircle size={20} /> Pedir directo por WhatsApp
             </button>
           </div>
         </div>

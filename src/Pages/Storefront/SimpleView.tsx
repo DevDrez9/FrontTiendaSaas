@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
 import AddToCartModal from './AddToCartModal';
-import { ShoppingCart, Plus } from 'lucide-react';
+import { ShoppingCart, Plus, MessageCircle } from 'lucide-react';
 import './Storefront.css';
 import { fixImageUrl } from '../../config/api';
 
@@ -14,6 +14,18 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
   const { addToCart, items, getTotal } = useCartStore();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedProductForCart, setSelectedProductForCart] = useState<any>(null);
+
+  const handleWhatsAppOrder = (producto: any) => {
+    if (!config?.whatsapp) {
+      alert("El vendedor no ha configurado su número de WhatsApp.");
+      return;
+    }
+    const numero = config.whatsapp.replace(/[^0-9]/g, '');
+    const precio = producto.enOferta && producto.precioOferta ? producto.precioOferta : producto.precio;
+    const moneda = config?.moneda || 'Bs';
+    const mensaje = `Hola, quiero hacer un pedido del producto: ${producto.nombre} - Precio: ${moneda} ${precio}`;
+    window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`, '_blank');
+  };
 
   const totalItems = items.reduce((acc, item) => acc + item.cantidad, 0);
 
@@ -80,11 +92,12 @@ export default function SimpleView({ storeData, productos }: { storeData: any, p
                       )}
                     </div>
                     <button 
-                      onClick={() => setSelectedProductForCart(p)}
-                      className="btn btn-primary rounded-full p-2"
-                      title="Agregar al carrito"
+                      onClick={(e) => { e.preventDefault(); handleWhatsAppOrder(p); }}
+                      className="btn rounded-full p-2 shadow-sm"
+                      style={{ backgroundColor: '#25D366', color: '#fff', border: 'none' }}
+                      title="Pedir por WhatsApp"
                     >
-                      <Plus size={20} />
+                      <MessageCircle size={20} />
                     </button>
                   </div>
                 </div>

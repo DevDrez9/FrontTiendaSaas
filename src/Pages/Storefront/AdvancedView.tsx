@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShoppingCart, Menu, Plus, X, Search, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Menu, Plus, X, Search, ChevronRight, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
@@ -17,6 +17,18 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
   const [categoriaActiva, setCategoriaActiva] = useState<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedProductForCart, setSelectedProductForCart] = useState<any>(null);
+
+  const handleWhatsAppOrder = (producto: any) => {
+    if (!config?.whatsapp) {
+      alert("El vendedor no ha configurado su número de WhatsApp.");
+      return;
+    }
+    const numero = config.whatsapp.replace(/[^0-9]/g, '');
+    const precio = producto.enOferta && producto.precioOferta ? producto.precioOferta : producto.precio;
+    const moneda = config?.moneda || 'Bs';
+    const mensaje = `Hola, quiero hacer un pedido del producto: ${producto.nombre} - Precio: ${moneda} ${precio}`;
+    window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`, '_blank');
+  };
 
   // Extraer categorías únicas de los productos
   const categorias = Array.from(new Map(productos.filter(p => p.categoria).map(p => [p.categoria.id, p.categoria])).values());
@@ -52,24 +64,6 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
             )}
           </div>
 
-          <div className="flex-1 items-center justify-center gap-6 desktop-categories" style={{ margin: '0 2rem', overflowX: 'auto' }}>
-            <button 
-              onClick={() => setCategoriaActiva(null)}
-              style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1rem', fontWeight: categoriaActiva === null ? '700' : '500', color: categoriaActiva === null ? colorPrimario : '#4b5563', transition: 'color 0.2s' }}
-            >
-              Todos
-            </button>
-            {categorias.map((cat: any) => (
-              <button 
-                key={cat.id}
-                onClick={() => setCategoriaActiva(cat.id)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1rem', fontWeight: categoriaActiva === cat.id ? '700' : '500', color: categoriaActiva === cat.id ? colorPrimario : '#4b5563', transition: 'color 0.2s', whiteSpace: 'nowrap' }}
-              >
-                {cat.nombre}
-              </button>
-            ))}
-          </div>
-
           <div className="flex items-center gap-6">
             <button 
               onClick={() => setIsCheckoutOpen(true)}
@@ -85,29 +79,6 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
               )}
             </button>
           </div>
-
-          {/* Menú Móvil */}
-          {isMobileMenuOpen && (
-            <div className="absolute top-full left-0 w-full shadow-md" style={{ backgroundColor: colorSecundario, borderTop: '1px solid #e5e7eb', zIndex: 50 }}>
-              <div className="flex flex-col p-4 gap-4">
-                <button 
-                  onClick={() => { setCategoriaActiva(null); setIsMobileMenuOpen(false); }}
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: '1.1rem', fontWeight: categoriaActiva === null ? '700' : '500', color: categoriaActiva === null ? colorPrimario : '#4b5563' }}
-                >
-                  Todos los productos
-                </button>
-                {categorias.map((cat: any) => (
-                  <button 
-                    key={cat.id}
-                    onClick={() => { setCategoriaActiva(cat.id); setIsMobileMenuOpen(false); }}
-                    style={{ background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: '1.1rem', fontWeight: categoriaActiva === cat.id ? '700' : '500', color: categoriaActiva === cat.id ? colorPrimario : '#4b5563' }}
-                  >
-                    {cat.nombre}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </header>
 
@@ -116,6 +87,51 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
         <div 
           style={{ height: '400px', backgroundImage: `url(${config?.banners?.[0]?.url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1200'})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         ></div>
+      </section>
+
+      {/* Categorías en burbujas */}
+      <section className="container py-6 overflow-x-auto" style={{ maxWidth: '1280px' }}>
+        <div className="flex gap-4 items-center" style={{ paddingBottom: '0.5rem' }}>
+          <button 
+            onClick={() => setCategoriaActiva(null)}
+            className="flex-shrink-0"
+            style={{ 
+              padding: '0.5rem 1.5rem', 
+              borderRadius: '9999px', 
+              backgroundColor: categoriaActiva === null ? colorPrimario : '#fff', 
+              color: categoriaActiva === null ? '#fff' : '#4b5563', 
+              border: `1px solid ${categoriaActiva === null ? colorPrimario : '#e5e7eb'}`,
+              fontWeight: '600',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+              transition: 'all 0.2s'
+            }}
+          >
+            Todos
+          </button>
+          {categorias.map((cat: any) => (
+            <button 
+              key={cat.id}
+              onClick={() => setCategoriaActiva(cat.id)}
+              className="flex-shrink-0"
+              style={{ 
+                padding: '0.5rem 1.5rem', 
+                borderRadius: '9999px', 
+                backgroundColor: categoriaActiva === cat.id ? colorPrimario : '#fff', 
+                color: categoriaActiva === cat.id ? '#fff' : '#4b5563', 
+                border: `1px solid ${categoriaActiva === cat.id ? colorPrimario : '#e5e7eb'}`,
+                fontWeight: '600',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                transition: 'all 0.2s'
+              }}
+            >
+              {cat.nombre}
+            </button>
+          ))}
+        </div>
       </section>
 
       {/* Main Content */}
@@ -163,11 +179,11 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
                   {/* Overlay Hover Actions */}
                   <div className="store-gradient-overlay">
                     <button 
-                      onClick={() => setSelectedProductForCart(p)}
-                      className="btn btn-primary w-full shadow-lg"
-                      style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'center' }}
+                      onClick={(e) => { e.preventDefault(); handleWhatsAppOrder(p); }}
+                      className="btn w-full shadow-lg"
+                      style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'center', backgroundColor: '#25D366', color: '#fff', border: 'none', gap: '0.5rem', alignItems: 'center' }}
                     >
-                      <Plus size={18} /> Agregar al Carrito
+                      <MessageCircle size={18} /> Pedir por WhatsApp
                     </button>
                   </div>
                 </div>
