@@ -91,35 +91,33 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
 
       {/* Categorías en burbujas */}
       <div className="category-bubbles-wrapper" style={{ backgroundColor: colorSecundario }}>
-        <section className="container overflow-x-auto no-scrollbar" style={{ maxWidth: '1280px' }}>
-          <div className="category-bubbles-container">
+        <div className="category-bubbles-container no-scrollbar">
+          <button 
+            onClick={() => setCategoriaActiva(null)}
+            className="category-bubble"
+            style={{ 
+              backgroundColor: categoriaActiva === null ? colorPrimario : '#fff', 
+              color: categoriaActiva === null ? '#fff' : '#4b5563', 
+              border: `2px solid ${categoriaActiva === null ? colorPrimario : '#e5e7eb'}`
+            }}
+          >
+            Todos
+          </button>
+          {categorias.map((cat: any) => (
             <button 
-              onClick={() => setCategoriaActiva(null)}
+              key={cat.id}
+              onClick={() => setCategoriaActiva(cat.id)}
               className="category-bubble"
               style={{ 
-                backgroundColor: categoriaActiva === null ? colorPrimario : '#fff', 
-                color: categoriaActiva === null ? '#fff' : '#4b5563', 
-                border: `2px solid ${categoriaActiva === null ? colorPrimario : '#e5e7eb'}`
+                backgroundColor: categoriaActiva === cat.id ? colorPrimario : '#fff', 
+                color: categoriaActiva === cat.id ? '#fff' : '#4b5563', 
+                border: `2px solid ${categoriaActiva === cat.id ? colorPrimario : '#e5e7eb'}`
               }}
             >
-              Todos
+              {cat.nombre}
             </button>
-            {categorias.map((cat: any) => (
-              <button 
-                key={cat.id}
-                onClick={() => setCategoriaActiva(cat.id)}
-                className="category-bubble"
-                style={{ 
-                  backgroundColor: categoriaActiva === cat.id ? colorPrimario : '#fff', 
-                  color: categoriaActiva === cat.id ? '#fff' : '#4b5563', 
-                  border: `2px solid ${categoriaActiva === cat.id ? colorPrimario : '#e5e7eb'}`
-                }}
-              >
-                {cat.nombre}
-              </button>
-            ))}
-          </div>
-        </section>
+          ))}
+        </div>
       </div>
 
       {/* Main Content */}
