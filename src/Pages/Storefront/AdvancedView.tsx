@@ -90,49 +90,37 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
       </section>
 
       {/* Categorías en burbujas */}
-      <section className="container py-6 overflow-x-auto" style={{ maxWidth: '1280px' }}>
-        <div className="flex gap-4 items-center" style={{ paddingBottom: '0.5rem' }}>
-          <button 
-            onClick={() => setCategoriaActiva(null)}
-            className="flex-shrink-0"
-            style={{ 
-              padding: '0.5rem 1.5rem', 
-              borderRadius: '9999px', 
-              backgroundColor: categoriaActiva === null ? colorPrimario : '#fff', 
-              color: categoriaActiva === null ? '#fff' : '#4b5563', 
-              border: `1px solid ${categoriaActiva === null ? colorPrimario : '#e5e7eb'}`,
-              fontWeight: '600',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-              transition: 'all 0.2s'
-            }}
-          >
-            Todos
-          </button>
-          {categorias.map((cat: any) => (
+      <div className="category-bubbles-wrapper" style={{ backgroundColor: colorSecundario }}>
+        <section className="container overflow-x-auto no-scrollbar" style={{ maxWidth: '1280px' }}>
+          <div className="category-bubbles-container">
             <button 
-              key={cat.id}
-              onClick={() => setCategoriaActiva(cat.id)}
-              className="flex-shrink-0"
+              onClick={() => setCategoriaActiva(null)}
+              className="category-bubble"
               style={{ 
-                padding: '0.5rem 1.5rem', 
-                borderRadius: '9999px', 
-                backgroundColor: categoriaActiva === cat.id ? colorPrimario : '#fff', 
-                color: categoriaActiva === cat.id ? '#fff' : '#4b5563', 
-                border: `1px solid ${categoriaActiva === cat.id ? colorPrimario : '#e5e7eb'}`,
-                fontWeight: '600',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                transition: 'all 0.2s'
+                backgroundColor: categoriaActiva === null ? colorPrimario : '#fff', 
+                color: categoriaActiva === null ? '#fff' : '#4b5563', 
+                border: `2px solid ${categoriaActiva === null ? colorPrimario : '#e5e7eb'}`
               }}
             >
-              {cat.nombre}
+              Todos
             </button>
-          ))}
-        </div>
-      </section>
+            {categorias.map((cat: any) => (
+              <button 
+                key={cat.id}
+                onClick={() => setCategoriaActiva(cat.id)}
+                className="category-bubble"
+                style={{ 
+                  backgroundColor: categoriaActiva === cat.id ? colorPrimario : '#fff', 
+                  color: categoriaActiva === cat.id ? '#fff' : '#4b5563', 
+                  border: `2px solid ${categoriaActiva === cat.id ? colorPrimario : '#e5e7eb'}`
+                }}
+              >
+                {cat.nombre}
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
 
       {/* Main Content */}
       <main className="container flex-1 py-8" style={{ maxWidth: '1280px' }}>
