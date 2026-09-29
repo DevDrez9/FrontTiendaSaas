@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShoppingCart, Menu, Plus, X, Search, ChevronRight, MessageCircle } from 'lucide-react';
+import { ShoppingCart, Plus, X, Search, ChevronRight, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
@@ -15,7 +15,6 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
   const { addToCart, items } = useCartStore();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [categoriaActiva, setCategoriaActiva] = useState<number | null>(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedProductForCart, setSelectedProductForCart] = useState<any>(null);
 
   const handleWhatsAppOrder = (producto: any) => {
@@ -48,13 +47,6 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
 
         <div className="container flex items-center justify-between relative" style={{ height: '5rem', maxWidth: '1280px' }}>
           <div className="flex items-center gap-4">
-            <button 
-              className="mobile-menu-btn"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              style={{ background: 'transparent', border: 'none', cursor: 'pointer', alignItems: 'center' }}
-            >
-              <Menu size={24} color={colorPrimario} />
-            </button>
             {config?.logoUrl ? (
               <img src={fixImageUrl(config.logoUrl)} alt={config.nombreSitio} style={{ height: '2.5rem' }} />
             ) : (
