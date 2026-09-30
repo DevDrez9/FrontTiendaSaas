@@ -66,6 +66,7 @@ export default function DetalleProducto() {
   const config = producto.tienda?.configWeb;
   const colorPrimario = config?.colorPrimario || '#000000';
   const colorSecundario = config?.colorSecundario || '#ffffff';
+  const moneda = config?.moneda || 'Bs';
 
   const handleWhatsAppOrder = () => {
     if (!config?.whatsapp) {
@@ -74,7 +75,6 @@ export default function DetalleProducto() {
     }
     const numero = config.whatsapp.replace(/[^0-9]/g, '');
     const precio = producto.enOferta && producto.precioOferta ? producto.precioOferta : producto.precio;
-    const moneda = config?.moneda || 'Bs';
     const total = Number(precio) * cantidad;
     const mensaje = `Hola, quiero hacer un pedido del producto: ${producto.nombre} - Cantidad: ${cantidad} - Total: ${moneda} ${total}`;
     window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`, '_blank');
@@ -159,9 +159,13 @@ export default function DetalleProducto() {
           <h1 className="product-title">{producto.nombre}</h1>
           
           <div className="product-price-container">
-            <span className="product-price">${producto.precio}</span>
-            {producto.enOferta && producto.precioOferta > 0 && (
-              <span className="product-price-offer">${producto.precioOferta}</span>
+            {producto.enOferta && producto.precioOferta > 0 ? (
+              <>
+                <span className="product-price">{moneda} {producto.precioOferta}</span>
+                <span className="product-price-offer">{moneda} {producto.precio}</span>
+              </>
+            ) : (
+              <span className="product-price">{moneda} {producto.precio}</span>
             )}
           </div>
           
