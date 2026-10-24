@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ShoppingCart, Plus, X, Search, ChevronRight, MessageCircle } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ShoppingCart, Plus, X, Search, ChevronRight, ChevronLeft, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore';
 import CheckoutModal from './CheckoutModal';
@@ -17,6 +17,10 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
   const [categoriaActiva, setCategoriaActiva] = useState<number | null>(null);
   const [selectedProductForCart, setSelectedProductForCart] = useState<any>(null);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
   const handleWhatsAppOrder = (producto: any) => {
     if (!config?.whatsapp) {
       alert("El vendedor no ha configurado su número de WhatsApp.");
@@ -29,10 +33,46 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
     window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`, '_blank');
   };
 
-  // Extraer categorías únicas de los productos
-  const categorias = Array.from(new Map(productos.filter(p => p.categoria).map(p => [p.categoria.id, p.categoria])).values());
-  const productosMostrados = categoriaActiva ? productos.filter(p => p.categoriaId === categoriaActiva) : productos;
-  const categoriaNombre = categoriaActiva ? categorias.find((c: any) => c.id === categoriaActiva)?.nombre : 'Todos los productos';
+  // Obtener categorías: primero de storeData.categorias si existen, o de productos como respaldo
+  const categorias = (storeData?.categorias && storeData.categorias.length > 0)
+    ? storeData.categorias
+    : Array.from(new Map(productos.filter((p: any) => p.categoria).map((p: any) => [p.categoria.id, p.categoria])).values());
+
+  const productosMostrados = categoriaActiva 
+    ? productos.filter(p => p.categoriaId === categoriaActiva || p.categoria?.id === categoriaActiva) 
+    : productos;
+  const categoriaNombre = categoriaActiva 
+    ? categorias.find((c: any) => c.id === categoriaActiva)?.nombre 
+    : 'Todos los productos';
+
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setCanScrollLeft(scrollLeft > 10);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [categorias]);
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = direction === 'left' ? -260 : 260;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (scrollRef.current && scrollRef.current.scrollWidth > scrollRef.current.clientWidth) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        scrollRef.current.scrollLeft += e.deltaY;
+      }
+    }
+  };
 
   const totalItems = items.reduce((acc, item) => acc + item.cantidad, 0);
 
@@ -82,35 +122,66 @@ export default function AdvancedView({ storeData, productos }: { storeData: any,
       </section>
 
       {/* Categorías en burbujas */}
-      <div className="category-bubbles-wrapper" style={{ backgroundColor: colorSecundario }}>
-        <div className="category-bubbles-container no-scrollbar">
-          <button 
-            onClick={() => setCategoriaActiva(null)}
-            className="category-bubble"
-            style={{ 
-              backgroundColor: categoriaActiva === null ? colorPrimario : '#fff', 
-              color: categoriaActiva === null ? '#fff' : '#4b5563', 
-              border: `2px solid ${categoriaActiva === null ? colorPrimario : '#e5e7eb'}`
-            }}
-          >
-            Todos
-          </button>
-          {categorias.map((cat: any) => (
-            <button 
-              key={cat.id}
-              onClick={() => setCategoriaActiva(cat.id)}
-              className="category-bubble"
-              style={{ 
-                backgroundColor: categoriaActiva === cat.id ? colorPrimario : '#fff', 
-                color: categoriaActiva === cat.id ? '#fff' : '#4b5563', 
-                border: `2px solid ${categoriaActiva === cat.id ? colorPrimario : '#e5e7eb'}`
-              }}
+      {categorias.length > 0 && (
+        <div className="category-bubbles-wrapper" style={{ backgroundColor: colorSecundario }}>
+          <div className="category-bubbles-nav">
+            {canScrollLeft && (
+              <button 
+                type="button"
+                className="category-scroll-btn left"
+                onClick={() => handleScroll('left')}
+                aria-label="Anterior categoría"
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+
+            <div 
+              ref={scrollRef}
+              onScroll={checkScroll}
+              onWheel={handleWheel}
+              className="category-bubbles-container no-scrollbar"
             >
-              {cat.nombre}
-            </button>
-          ))}
+              <button 
+                onClick={() => setCategoriaActiva(null)}
+                className="category-bubble"
+                style={{ 
+                  backgroundColor: categoriaActiva === null ? colorPrimario : '#fff', 
+                  color: categoriaActiva === null ? '#fff' : '#4b5563', 
+                  border: `2px solid ${categoriaActiva === null ? colorPrimario : '#e5e7eb'}`
+                }}
+              >
+                Todos
+              </button>
+              {categorias.map((cat: any) => (
+                <button 
+                  key={cat.id}
+                  onClick={() => setCategoriaActiva(cat.id)}
+                  className="category-bubble"
+                  style={{ 
+                    backgroundColor: categoriaActiva === cat.id ? colorPrimario : '#fff', 
+                    color: categoriaActiva === cat.id ? '#fff' : '#4b5563', 
+                    border: `2px solid ${categoriaActiva === cat.id ? colorPrimario : '#e5e7eb'}`
+                  }}
+                >
+                  {cat.nombre}
+                </button>
+              ))}
+            </div>
+
+            {canScrollRight && (
+              <button 
+                type="button"
+                className="category-scroll-btn right"
+                onClick={() => handleScroll('right')}
+                aria-label="Siguiente categoría"
+              >
+                <ChevronRight size={20} />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       <main className="container flex-1 py-8" style={{ maxWidth: '1280px' }}>
