@@ -1,17 +1,34 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Eye } from "lucide-react";
+import { PlanDemoShowcase, type PlanKey } from "../Demo/PlanDemoShowcase";
 import "./LandingPage.css";
 
 export default function LandingPage() {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [demoPlan, setDemoPlan] = useState<PlanKey>("avanzado");
+
+  const verDemoDePlan = (plan: PlanKey) => {
+    setDemoPlan(plan);
+    const el = document.getElementById("demo");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="landing-wrapper">
       <header className="landing-header">
         <div className="container landing-header-inner">
           <div className="logo-text">micatalogo</div>
-          <Link to="/login" className="btn btn-primary">
-            Iniciar Sesión
-          </Link>
+          <div className="flex items-center gap-4">
+            <a href="#demo" className="btn btn-secondary">
+              <Eye size={16} /> Ver Demos
+            </a>
+            <Link to="/login" className="btn btn-primary">
+              Iniciar Sesión
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -31,6 +48,9 @@ export default function LandingPage() {
               <Link to="/register" className="btn btn-primary">
                 Comenzar Gratis
               </Link>
+              <a href="#demo" className="btn btn-secondary">
+                <Eye size={16} /> Probar Demo de Tiendas
+              </a>
               <a href="#pricing" className="btn btn-secondary">
                 Ver Planes
               </a>
@@ -75,9 +95,18 @@ export default function LandingPage() {
                   <li>Gestión de inventario</li>
                 </ul>
                 
-                <Link to="/register" className="btn btn-secondary w-full">
-                  Empezar Básico
-                </Link>
+                <div className="pricing-card-actions">
+                  <Link to="/register" className="btn btn-secondary w-full">
+                    Empezar Básico
+                  </Link>
+                  <button
+                    type="button"
+                    className="btn-preview-plan"
+                    onClick={() => verDemoDePlan("basico")}
+                  >
+                    <Eye size={15} /> Ver cómo se ve tu tienda
+                  </button>
+                </div>
               </div>
 
               {/* Advanced Plan */}
@@ -96,9 +125,18 @@ export default function LandingPage() {
                   <li>Banners promocionales</li>
                 </ul>
                 
-                <Link to="/register" className="btn btn-primary w-full">
-                  Empezar Avanzado
-                </Link>
+                <div className="pricing-card-actions">
+                  <Link to="/register" className="btn btn-primary w-full">
+                    Empezar Avanzado
+                  </Link>
+                  <button
+                    type="button"
+                    className="btn-preview-plan"
+                    onClick={() => verDemoDePlan("avanzado")}
+                  >
+                    <Eye size={15} /> Ver cómo se ve tu tienda
+                  </button>
+                </div>
               </div>
 
               {/* Profesional Plan */}
@@ -116,11 +154,40 @@ export default function LandingPage() {
                   <li>Página de detalle interactiva de productos</li>
                 </ul>
                 
-                <Link to="/register" className="btn btn-secondary w-full">
-                  Empezar Profesional
-                </Link>
+                <div className="pricing-card-actions">
+                  <Link to="/register" className="btn btn-secondary w-full">
+                    Empezar Profesional
+                  </Link>
+                  <button
+                    type="button"
+                    className="btn-preview-plan"
+                    onClick={() => verDemoDePlan("profesional")}
+                  >
+                    <Eye size={15} /> Ver cómo se ve tu tienda
+                  </button>
+                </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Interactive Storefront Demo Section */}
+        <section id="demo" className="demo-showcase-section">
+          <div className="container">
+            <div className="demo-section-header">
+              <span className="demo-section-pill">VISTA PREVIA INTERACTIVA</span>
+              <h2 className="section-title" style={{ marginBottom: "0.75rem" }}>
+                Mira cómo se verá tu tienda según el plan que elijas
+              </h2>
+              <p className="demo-section-subtitle">
+                Interactúa con los 3 diseños en tiempo real: prueba el catálogo simple del{" "}
+                <strong>Plan Básico</strong>, los banners y categorías del{" "}
+                <strong>Plan Avanzado</strong> o haz clic en un producto en el{" "}
+                <strong>Plan Profesional</strong> para ver su galería de hasta 4 fotos.
+              </p>
+            </div>
+
+            <PlanDemoShowcase selectedPlan={demoPlan} onSelectPlan={setDemoPlan} />
           </div>
         </section>
       </main>

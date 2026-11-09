@@ -259,3 +259,92 @@
   .dominio-prefijo { display: none; }
   .dominio-input .form-input { border-radius: var(--radius-md); }
 }
+
+/* =========================================
+   Tarjeta de QR de la Tienda
+========================================= */
+.qr-tienda-card {
+  max-width: 56rem;
+}
+
+.qr-tienda-layout {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (max-width: 820px) {
+  .qr-tienda-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.qr-format-toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  background: #f1f5f9;
+  padding: 0.3rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.qr-format-toggle button {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.qr-format-toggle button.active {
+  background: #ffffff;
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+.qr-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 520px) {
+  .qr-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.qr-tienda-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.qr-canvas-wrapper {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-tienda-canvas {
+  width: 240px;
+  height: auto;
+  max-width: 100%;
+  border-radius: var(--radius-lg);
+  display: block;
+}
+

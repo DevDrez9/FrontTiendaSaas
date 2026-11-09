@@ -14,12 +14,14 @@ import SuscripcionDashboard from "./Pages/Dashboard/SuscripcionDashboard";
 import PagarSuscripcionPage from "./Pages/Onboarding/PagarSuscripcionPage";
 import StoreRouter from "./Pages/Storefront/StoreRouter";
 import DetalleProducto from "./Pages/Storefront/DetalleProducto";
+import PlanDemoPage from "./Pages/Demo/PlanDemoShowcase";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/demo" element={<PlanDemoPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/recuperar" element={<RecuperarPage />} />

@@ -4,6 +4,7 @@ import { useAuthStore } from '../../store/authStore';
 import './Dashboard.css';
 import { fixImageUrl } from '../../config/api';
 import DominioTiendaCard from './DominioTiendaCard';
+import QrTiendaCard from './QrTiendaCard';
 
 // Mismos formatos y tamaño que acepta el backend en /upload/image
 const FORMATOS_IMAGEN = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
@@ -123,6 +124,13 @@ export default function ConfiguracionDashboard() {
 
   return (
     <div className="p-8">
+      <div className="mb-8">
+        <QrTiendaCard
+          nombreTienda={storeData.nombre}
+          dominio={storeData.dominio}
+          colorPrimario={configWeb.colorPrimario}
+        />
+      </div>
       <DominioTiendaCard
         tiendaId={storeData.id}
         dominioActual={storeData.dominio}

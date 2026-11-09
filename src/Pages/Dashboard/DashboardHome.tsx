@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
 import { ExternalLink, Package, ShoppingCart, TrendingUp } from 'lucide-react';
+import QrTiendaCard from './QrTiendaCard';
 import './Dashboard.css';
 
 export default function DashboardHome() {
@@ -95,6 +96,12 @@ export default function DashboardHome() {
           </div>
         </div>
       </div>
+
+      <QrTiendaCard
+        nombreTienda={storeData.nombre}
+        dominio={storeData.dominio}
+        colorPrimario={storeData.configWeb?.colorPrimario}
+      />
     </div>
   );
 }

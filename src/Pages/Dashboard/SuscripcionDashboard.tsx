@@ -5,8 +5,17 @@ const POLL_INTERVAL_MS = 20_000; // cada 20 segundos
 const POLL_DURATION_MS = 2 * 60_000; // durante 2 minutos (igual que el verificador del backend)
 import axios from 'axios';
 import { useAuthStore } from '../../store/authStore';
-import { Package, CalendarClock, Check, CheckCircle2, XCircle, RefreshCw, QrCode } from 'lucide-react';
+import { Package, CalendarClock, Check, CheckCircle2, XCircle, RefreshCw, QrCode, Eye, ChevronUp } from 'lucide-react';
+import { PlanDemoShowcase, type PlanKey } from '../Demo/PlanDemoShowcase';
 import './Dashboard.css';
+
+function mapPlanToDemoKey(plan: any): PlanKey {
+  const nivel = Number(plan?.nivel || 0);
+  const nombre = (plan?.nombre || '').toLowerCase();
+  if (nivel >= 3 || nombre.includes('profesional') || nombre.includes('pro')) return 'profesional';
+  if (nivel === 2 || nombre.includes('avanzado')) return 'avanzado';
+  return 'basico';
+}
 
 interface Props {
   /** 'onboarding' = pantalla de pago obligatoria antes de entrar al panel */
@@ -26,6 +35,8 @@ export default function SuscripcionDashboard({ modo = 'dashboard', onPagado }: P
   const [paymentStatus, setPaymentStatus] = useState<string>('PENDIENTE');
   const [pollingActivo, setPollingActivo] = useState(false);
   const [verificando, setVerificando] = useState(false);
+  const [mostrarDemo, setMostrarDemo] = useState(false);
+  const [demoPlan, setDemoPlan] = useState<PlanKey>('avanzado');
 
   useEffect(() => {
     fetchStoreAndPlans();
@@ -174,18 +185,34 @@ export default function SuscripcionDashboard({ modo = 'dashboard', onPagado }: P
 
       {!qrData ? (
         <div className="card p-8">
-          <h2 className="text-2xl font-bold mb-2">Comprar o Renovar Plan</h2>
-          <p className="text-muted mb-6">Elige un plan y la cantidad de meses. Pagarás con QR.</p>
+          <div className="flex justify-between items-center flex-wrap gap-4 mb-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Comprar o Renovar Plan</h2>
+              <p className="text-muted">Elige un plan y la cantidad de meses. Pagarás con QR.</p>
+            </div>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setMostrarDemo(prev => !prev)}
+            >
+              {mostrarDemo ? <ChevronUp size={16} /> : <Eye size={16} />}
+              {mostrarDemo ? 'Ocultar vista previa de tienda' : 'Ver demo de cómo se verá tu tienda'}
+            </button>
+          </div>
 
           <div className="plan-grid mb-6">
             {planes.map(p => {
               const activo = selectedPlan === p.id;
+              const demoKey = mapPlanToDemoKey(p);
               return (
                 <button
                   type="button"
                   key={p.id}
                   className={`plan-option ${activo ? 'plan-option--selected' : ''}`}
-                  onClick={() => setSelectedPlan(p.id)}
+                  onClick={() => {
+                    setSelectedPlan(p.id);
+                    setDemoPlan(demoKey);
+                  }}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <h3 className="text-lg font-bold">{p.nombre}</h3>
@@ -195,11 +222,36 @@ export default function SuscripcionDashboard({ modo = 'dashboard', onPagado }: P
                   <p className="plan-price">
                     {p.precioMensual} <span className="text-sm text-muted font-medium">BOB / mes</span>
                   </p>
-                  <span className="badge badge-neutral mt-2">Hasta {p.limiteProductos} productos</span>
+                  <div className="flex justify-between items-center w-full mt-2 gap-2 flex-wrap">
+                    <span className="badge badge-neutral">Hasta {p.limiteProductos} productos</span>
+                    <span
+                      className="text-xs font-semibold text-primary flex items-center gap-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPlan(p.id);
+                        setDemoPlan(demoKey);
+                        setMostrarDemo(true);
+                      }}
+                    >
+                      <Eye size={13} /> Ver demo
+                    </span>
+                  </div>
                 </button>
               );
             })}
           </div>
+
+          {mostrarDemo && (
+            <div className="mb-8 pt-6 border-t animate-fade-in">
+              <div className="mb-4">
+                <h3 className="text-xl font-bold">Vista previa según el plan</h3>
+                <p className="text-sm text-muted">
+                  Así verán tus clientes tu tienda con cada una de las 3 opciones.
+                </p>
+              </div>
+              <PlanDemoShowcase selectedPlan={demoPlan} onSelectPlan={setDemoPlan} />
+            </div>
+          )}
 
           <div className="plan-footer border-t">
             <div className="form-group mb-0">
