@@ -30,30 +30,44 @@ export default function AdminPanel() {
     }
   }, [user]);
 
-  const handleUpdatePlan = async (tiendaId: number, newPlanId: number | null, isRenovation: boolean = false) => {
+  const handleUpdatePlan = async (tienda: any, newPlanId: number | null, isRenovation: boolean = false) => {
     let payload: any = { planId: newPlanId === 0 ? null : newPlanId };
     
-    if (newPlanId !== 0 && newPlanId !== null && isRenovation) {
-      const mesesStr = prompt('¿Cuántos meses de suscripción deseas asignar/renovar?');
-      if (!mesesStr) return;
-      const meses = parseInt(mesesStr);
-      if (isNaN(meses) || meses <= 0) {
-        alert('Cantidad de meses inválida');
-        return;
+    if (newPlanId !== 0 && newPlanId !== null) {
+      const tieneVigencia = tienda.suscripcionFin && new Date(tienda.suscripcionFin) > new Date();
+      if (isRenovation || !tieneVigencia) {
+        const mesesStr = prompt(
+          isRenovation 
+            ? '¿Cuántos meses de suscripción deseas sumar/renovar?' 
+            : 'La tienda no tiene suscripción activa. ¿Cuántos meses deseas asignarle?',
+          '1'
+        );
+        if (!mesesStr) {
+          fetchTiendasAndPlanes();
+          return;
+        }
+        const meses = parseInt(mesesStr);
+        if (isNaN(meses) || meses <= 0) {
+          alert('Cantidad de meses inválida');
+          fetchTiendasAndPlanes();
+          return;
+        }
+        payload.meses = meses;
       }
-      payload.meses = meses;
     }
 
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/tiendas/admin/${tiendaId}/plan`, 
+      await axios.patch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/tiendas/admin/${tienda.id}/plan`, 
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchTiendasAndPlanes(); // Refetch
       alert('Plan y suscripción actualizados correctamente');
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert('Error al actualizar plan');
+      const msg = error.response?.data?.message || 'Error al actualizar plan';
+      alert(Array.isArray(msg) ? msg.join(', ') : msg);
+      fetchTiendasAndPlanes();
     }
   };
 
@@ -131,8 +145,8 @@ export default function AdminPanel() {
                       <select 
                         className="form-input"
                         style={{ padding: '0.25rem 0.5rem', width: 'auto' }}
-                        defaultValue={tienda.planId || 0}
-                        onChange={(e) => handleUpdatePlan(tienda.id, Number(e.target.value), false)}
+                        value={tienda.planId || 0}
+                        onChange={(e) => handleUpdatePlan(tienda, Number(e.target.value), false)}
                       >
                         {planes.map(p => (
                           <option key={p.id === null ? 0 : p.id} value={p.id === null ? 0 : p.id}>
@@ -164,7 +178,7 @@ export default function AdminPanel() {
                     <td>
                       <div className="flex gap-2 flex-wrap">
                         {tienda.planId && (
-                          <button className="btn btn-primary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }} onClick={() => handleUpdatePlan(tienda.id, tienda.planId, true)}>
+                          <button className="btn btn-primary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }} onClick={() => handleUpdatePlan(tienda, tienda.planId, true)}>
                             Renovar
                           </button>
                         )}
