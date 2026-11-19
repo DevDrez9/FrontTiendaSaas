@@ -84,9 +84,21 @@ export default function DetalleProducto() {
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f9fafb' }}>
       {/* Header */}
       <header className="shadow-sm" style={{ position: 'sticky', top: 0, zIndex: 40, backgroundColor: colorSecundario }}>
-        <div style={{ backgroundColor: colorPrimario, color: '#fff', textAlign: 'center', padding: '0.25rem 0', fontSize: '0.75rem' }}>
-          Envíos a todo el país | Compra segura
-        </div>
+        <Link
+          to="/#pricing"
+          style={{
+            display: 'block',
+            backgroundColor: colorPrimario,
+            color: '#fff',
+            textAlign: 'center',
+            padding: '0.25rem 0',
+            fontSize: '0.75rem',
+            textDecoration: 'none',
+            fontWeight: 500,
+          }}
+        >
+          Quiero mi catálogo
+        </Link>
 
         <div className="container flex items-center justify-between relative" style={{ height: '5rem', maxWidth: '1280px' }}>
           <div className="flex items-center gap-4">

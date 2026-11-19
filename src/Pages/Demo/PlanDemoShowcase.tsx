@@ -608,12 +608,18 @@ export function PlanDemoShowcase({
           {activePlan !== 'basico' && !detalleProducto && (
             <div className="demo-store-advanced">
               {/* Top announcement bar */}
-              <div
+              <Link
+                to="/#pricing"
                 className="demo-top-announcement"
-                style={{ backgroundColor: effectivePrimaryColor }}
+                style={{
+                  display: 'block',
+                  backgroundColor: effectivePrimaryColor,
+                  color: '#fff',
+                  textDecoration: 'none',
+                }}
               >
-                Envíos a todo el país | Compra segura
-              </div>
+                Quiero mi catálogo
+              </Link>
 
               {/* Header Avanzado */}
               <header className="demo-advanced-header">
@@ -824,12 +830,18 @@ export function PlanDemoShowcase({
           ========================================== */}
           {activePlan === 'profesional' && detalleProducto && (
             <div className="demo-store-advanced">
-              <div
+              <Link
+                to="/#pricing"
                 className="demo-top-announcement"
-                style={{ backgroundColor: effectivePrimaryColor }}
+                style={{
+                  display: 'block',
+                  backgroundColor: effectivePrimaryColor,
+                  color: '#fff',
+                  textDecoration: 'none',
+                }}
               >
-                Envíos a todo el país | Compra segura
-              </div>
+                Quiero mi catálogo
+              </Link>
 
               <header className="demo-advanced-header">
                 <div className="demo-advanced-header-inner">

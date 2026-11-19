@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Eye } from "lucide-react";
 import { PlanDemoShowcase, type PlanKey } from "../Demo/PlanDemoShowcase";
 import "./LandingPage.css";
@@ -7,6 +7,17 @@ import "./LandingPage.css";
 export default function LandingPage() {
   const [isAnnual, setIsAnnual] = useState(false);
   const [demoPlan, setDemoPlan] = useState<PlanKey>("avanzado");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const targetId = location.hash.replace("#", "");
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location.hash]);
 
   const verDemoDePlan = (plan: PlanKey) => {
     setDemoPlan(plan);
